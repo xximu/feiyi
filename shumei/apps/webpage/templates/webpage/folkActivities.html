@@ -1,0 +1,441 @@
+{% extends 'base.html' %}
+{% block title %}非遗传承页面 - 民俗{% endblock %}
+{% block css %}
+<style>
+    .content-wrapper {
+        display: flex;
+        flex-direction: row;
+        margin: 20px;
+    }
+    .vertical-navigation {
+        display: flex;
+        flex-direction: column;
+        width: 150px;
+        background-color: #fff;
+        color: #333;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        max-height: 250px;
+    }
+    .vertical-navigation a {
+        color: #333;
+        text-decoration: none;
+        margin: 10px 0;
+        font-size: 1.1em;
+    }
+    .vertical-navigation .active {
+        background-color: #f1f1f1;
+    }
+    .content {
+        padding: 20px;
+        background-color: #fff;
+        margin-left: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        flex-grow: 1;
+        height: auto;
+        width: 80%;
+    }
+    .content h2 {
+        font-size: 2em;
+    }
+    .content p {
+        font-size: 1.1em;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+    .detail-box {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #fff;
+        border: 1px solid #ccc;
+        padding: 20px;
+        z-index: 1000;
+        max-width: 80%;
+        max-height: 80%;
+        overflow-y: auto;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .detail-box h3 {
+        margin-top: 0;
+    }
+    .detail-box p {
+        margin: 10px 0;
+    }
+    .detail-box .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+    }
+    .item-container {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        margin: 10px;
+    }
+    .item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        width: 30%;
+        margin-bottom: 10px;
+    }
+    .item img {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 4px;
+    }
+    .item a {
+        color: #333;
+        text-decoration: none;
+        margin-top: 10px;
+        font-size: 1.1em;
+    }
+    .item .name {
+        margin-top: 10px;
+    }
+    .item .skill {
+        margin-top: 5px;
+    }
+    .pagination {
+        text-align: center;
+        margin-top: 20px;
+    }
+    .page-numbers {
+        display: inline-block;
+        margin: 0 20px;
+    }
+    .page-number {
+        margin: 0 5px;
+        cursor: pointer;
+        padding: 5px 10px;
+        background-color: white;
+        color: black;
+        border-radius: 4px;
+    }
+    .page-number:hover {
+        background-color: #0c88b7;
+    }
+    .page-number:active {
+        background-color: #087ea3;
+    }
+    .page-number.active {
+        background-color: #1da6e0;
+        color: white;
+    }
+    button {
+        padding: 10px 20px;
+        margin: 0 10px;
+        cursor: pointer;
+        background-color: #1da6e0;
+        color: white;
+        border-radius: 5px;
+        border: none;
+    }
+    button:hover {
+        background-color: #0c88b7;
+    }
+    button:disabled {
+        background-color: #e0e0e0;
+        color: #ccc;
+        cursor: not-allowed;
+    }
+    button:focus {
+        outline: none;
+    }
+    body {
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="content-wrapper">
+    <div class="vertical-navigation">
+        <a href="{% url 'web:knowledge' %}" id="linkKnowledge">传承人关系图谱</a>
+        <a href="{% url 'web:inheritorChart' %}" id="linkInheritorChart">传承人图表</a>
+        <a href="{% url 'web:traditionalSkill' %}" id="linkTraditionalSkill">传统技艺</a>
+        <a href="{% url 'web:folkActivities' %}" id="linkFolkActivities">民俗活动</a>
+        <a href="{% url 'web:operaAndMusic' %}" id="linkOperaAndMusic">戏曲与音乐</a>
+    </div>
+    <div class="content" id="content">
+        <div class="item-container" id="itemContainer">
+        </div>
+        <div class="pagination">
+            <button id="prevPage" onclick="prevPage()" disabled>上一页</button>
+            <div class="page-numbers" id="pageNumbers">
+            </div>
+            <button id="nextPage" onclick="nextPage()">下一页</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+<script>
+    const items = [
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200715145156_0519.jpg",
+            alt: "赛龙舟",
+            skill: "【赛龙舟】",
+            name: "张吉兵",
+            link: "http://feiyi.wentiyun.cn/Exhibitor-369.html"
+        },
+        {
+            img: "http://whyimg.wentiyun.cn/feiyi/20220919/c17639b2-a4aa-4c38-978c-77681cda458d.png",
+            alt: "攸县打铁水",
+            skill: "【攸县打铁水】",
+            name: "宁新义",
+            link: "http://feiyi.wentiyun.cn/Exhibitor-28.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200715103528_1735.jpg",
+            alt: "汝城香火龙",
+            skill: "【汝城香火龙】",
+            name: "范忠茂",
+            link: "http://feiyi.wentiyun.cn/Exhibitor-277.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200715111806_3754.jpg",
+            alt: "抬阁",
+            skill: "【抬阁】",
+            name: "李阳波",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-323.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200715112258_0040.jpg",
+            alt: "客家火龙",
+            skill: "【客家火龙】",
+            name: "曾龙祥",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-329.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200715135955_7677.jpg",
+            alt: "龙舞（板板龙灯）",
+            skill: "【龙舞（板板龙灯）】",
+            name: "李承锋",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-343.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200715142605_5647.JPG",
+            alt: "衡山拜龙",
+            skill: "【衡山拜龙】",
+            name: "李运华",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-362.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200715144206_1147.jpg",
+            alt: "马迹塘扎故事",
+            skill: "【马迹塘扎故事】",
+            name: "詹儒珍",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-377.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200715145259_3539.jpg",
+            alt: "刀梯舞狮",
+            skill: "【刀梯舞狮】",
+            name: "姚仕彬",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-392.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200714151008_8792.jpg",
+            alt: "抬阁（珠梅故事会）",
+            skill: "【抬阁（珠梅故事会）】",
+            name: "刘如松",
+            link: "http://feiyi.wentiyun.cn/Exhibitor-120.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200714153007_4959.jpg",
+            alt: "新化山歌",
+            skill: "【新化山歌】",
+            name: "伍芬邓",
+            link: "http://feiyi.wentiyun.cn/Exhibitor-140.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200714152414_2133.JPG",
+            alt: "八峒瑶族跳鼓坛",
+            skill: "【八峒瑶族跳鼓坛】",
+            name: "秦刚",
+            link: "http://feiyi.wentiyun.cn/Exhibitor-133.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200715105951_9996.jpg",
+            alt: "龙舞（芷江孽龙）",
+            skill: "【龙舞（芷江孽龙）】",
+            name: "田志泽",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-312.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200715111158_7539.jpg",
+            alt: "扎制吊龙",
+            skill: "【扎制吊龙】",
+            name: "兰立校",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-315.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200715111806_3754.jpg",
+            alt: "抬阁（长乐抬阁故事会）",
+            skill: "【抬阁（长乐抬阁故事会）】",
+            name: "李阳波",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-323.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200715111912_1572.jpg",
+            alt: "苗族四月八",
+            skill: "【苗族四月八】",
+            name: "吴牛振",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-325.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200715112024_1442.jpg",
+            alt: "苗族赶秋",
+            skill: "【苗族赶秋】",
+            name: "吴海深",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-327.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200715125018_7216.jpg",
+            alt: "赛龙舟",
+            skill: "【赛龙舟】",
+            name: "姜盛文",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-340.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200715140702_4061.jpg",
+            alt: "衡南七巧龙舞",
+            skill: "【衡南七巧龙舞】",
+            name: "刘晓安",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-350.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200715141256_6981.jpg",
+            alt: "龙舞（雪峰断颈龙）",
+            skill: "【龙舞（雪峰断颈龙）】",
+            name: "易图毅",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-353.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200715142404_8927.jpg",
+            alt: "龙舞（九市稻草龙）",
+            skill: "【龙舞（九市稻草龙）】",
+            name: "肖求进",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-360.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200715144545_7481.jpg",
+            alt: "益阳虾子起拱",
+            skill: "【益阳虾子起拱】",
+            name: "鲁运生",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-382.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200715112116_5640.jpg",
+            alt: "抬阁（珠梅抬故事）",
+            skill: "【抬阁（珠梅抬故事）】",
+            name: "刘齐跃",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-328.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200715111704_6363.jpg",
+            alt: "抬阁（长乐抬阁故事会）",
+            skill: "【抬阁（长乐抬阁故事会）】",
+            name: "陈范兴",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-321.html"
+        },
+    ];
+    let currentPage = 1;
+    const itemsPerPage = 9;
+    const totalPages = Math.ceil(items.length / itemsPerPage);
+    function updatePagination() {
+        const pageNumbers = document.querySelectorAll('.page-number');
+        pageNumbers.forEach((span, index) => {
+            if (index + 1 === currentPage) {
+                span.classList.add('active'); // 为当前页添加active类
+            } else {
+                span.classList.remove('active'); // 移除其他页的active类
+            }
+        });
+        const prevButton = document.getElementById('prevPage');
+        const nextButton = document.getElementById('nextPage');
+        if (currentPage === 1) {
+            prevButton.disabled = true;
+        } else {
+            prevButton.disabled = false;
+        }
+        if (currentPage === totalPages) {
+            nextButton.disabled = true;
+        } else {
+            nextButton.disabled = false;
+        }
+    }
+    function goToPage(page) {
+        if (page >= 1 && page <= totalPages) {
+            currentPage = page;
+            updatePagination();
+            displayItems();
+        }
+    }
+    function prevPage() {
+        if (currentPage > 1) {
+            currentPage--;
+            updatePagination();
+            displayItems();
+        }
+    }
+    function nextPage() {
+        if (currentPage < totalPages) {
+            currentPage++;
+            updatePagination();
+            displayItems();
+        }
+    }
+    function displayItems() {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const itemsToDisplay = items.slice(startIndex, endIndex);
+        const itemContainer = document.getElementById('itemContainer');
+        itemContainer.innerHTML = '';
+        itemsToDisplay.forEach(item => {
+            const itemElement = document.createElement('div');
+            itemElement.className = 'item';
+            itemElement.innerHTML = `
+                <img src="${item.img}" alt="${item.alt}">
+                <a href="${item.link}" target="_blank" class="skill">${item.skill}</a>
+                <a href="${item.link}" target="_blank" class="name">${item.name}</a>
+            `;
+            itemContainer.appendChild(itemElement);
+        });
+    }
+    function generatePageNumbers() {
+        const pageNumbersContainer = document.getElementById('pageNumbers');
+        pageNumbersContainer.innerHTML = '';
+        for (let i = 1; i <= totalPages; i++) {
+            const pageNumber = document.createElement('span');
+            pageNumber.className = 'page-number';
+            pageNumber.textContent = i;
+            pageNumber.onclick = () => goToPage(i);
+            pageNumbersContainer.appendChild(pageNumber);
+        }
+    }
+    updatePagination();
+    displayItems();
+    generatePageNumbers();
+    goToPage(1);
+    const currentPath = window.location.pathname;
+    const links = document.querySelectorAll('.vertical-navigation a');
+    links.forEach(link => {
+        const linkHref = link.getAttribute('href');
+        if (currentPath === linkHref) {
+            link.classList.add('active');
+        }
+    });
+</script>
+{% endblock %}

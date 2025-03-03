@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% block title %}非遗传承页面 - 数据{% endblock %}
+{% block css %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .content-wrapper {
+            display: flex;
+            flex-direction: row;
+            margin: 20px;
+        }
+
+        .vertical-navigation {
+            display: flex;
+            flex-direction: column;
+            width: 150px; /* 增加导航栏宽度 */
+            background-color: #fff;
+            color: #333;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            max-height: 250px; /* 缩短导航栏高度 */
+        }
+
+        .vertical-navigation a {
+            color: #333;
+            text-decoration: none;
+            margin: 10px 0;
+            font-size: 1.1em;
+        }
+
+        .vertical-navigation .active {
+            background-color: #f1f1f1; /* 悬停时改变背景颜色 */
+        }
+
+        .content {
+            padding: 20px;
+            background-color: #fff;
+            margin-left: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            flex-grow: 1;
+            height: 500px;
+            width: 80%;
+        }
+
+        .content h2 {
+            font-size: 2em;
+        }
+
+        .content p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .detail-box {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            border: 1px solid #ccc;
+            padding: 20px;
+            z-index: 1000;
+            max-width: 80%;
+            max-height: 80%;
+            overflow-y: auto;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .detail-box h3 {
+            margin-top: 0;
+        }
+
+        .detail-box p {
+            margin: 10px 0;
+        }
+
+        .detail-box .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="content-wrapper">
+        <div class="vertical-navigation">
+            <a href="{% url 'web:knowledge' %}" id="linkKnowledge">传承人关系图谱</a>
+            <a href="{% url 'web:inheritorChart' %}" id="linkInheritorChart">传承人图表</a>
+            <a href="{% url 'web:traditionalSkill' %}" id="linkTraditionalSkill">传统技艺</a>
+            <a href="{% url 'web:folkActivities' %}" id="linkFolkActivities">民俗活动</a>
+            <a href="{% url 'web:operaAndMusic' %}" id="linkOperaAndMusic">戏曲与音乐</a>
+        </div>
+        <div class="content" id="content">
+            <div style="width: 80%; margin: auto;">
+                <canvas id="myChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="detail-box" id="detailBox">
+        <span class="close-btn" onclick="closeDetailBox()">X</span>
+        <h3 id="detailTitle"></h3>
+        <p id="detailContent"></p>
+    </div>
+{% endblock %}
+{% block js %}
+    <script>
+        const data = [
+            {level: '国家级', projects: 137, 传承人: 121},
+            {level: '省级', projects: 410, 传承人: 304},
+            {level: '市级', projects: 1412, 传承人: 906},
+            {level: '县级', projects: 2223, 传承人: 2773}
+        ];
+        const ctx = document.getElementById('myChart').getContext('2d');
+        const myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.map(d => d.level),
+                datasets: [
+                    {
+                        label: '非遗代表性项目',
+                        data: data.map(d => d.projects),
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        fill: true
+                    },
+                    {
+                        label: '代表性传承人',
+                        data: data.map(d => d.传承人),
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: '数量'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: '级别'
+                        }
+                    }
+                },
+                onClick: (event, elements) => {
+                    if (elements.length > 0) {
+                        const index = elements[0].index;
+                        const item = data[index];
+                        showDetailBox(item);
+                    }
+                }
+            }
+        });
+        function showDetailBox(item) {
+            const detailBox = document.getElementById('detailBox');
+            const detailTitle = document.getElementById('detailTitle');
+            const detailContent = document.getElementById('detailContent');
+            detailTitle.innerHTML = `级别: ${item.level}`;
+            detailContent.innerHTML = `
+                    <strong>非遗代表性项目:</strong> ${item.projects}<br>
+                    <strong>代表性传承人:</strong> ${item.传承人} `;
+            detailBox.style.display = 'block';
+        }
+        function closeDetailBox() {
+            const detailBox = document.getElementById('detailBox');
+            detailBox.style.display = 'none';
+        }
+        const currentPath = window.location.pathname;
+        const links = document.querySelectorAll('.vertical-navigation a');
+        links.forEach(link => {
+            const linkHref = link.getAttribute('href');
+            if (currentPath === linkHref) {
+                link.classList.add('active');
+            }
+        });
+    </script>
+{% endblock %}

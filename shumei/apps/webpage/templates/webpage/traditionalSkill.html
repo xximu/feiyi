@@ -1,0 +1,550 @@
+{% extends 'base.html' %}
+
+{% block title %}非遗传承页面 - 技艺{% endblock %}
+
+{% block css %}
+<style>
+    .content-wrapper {
+        display: flex;
+        flex-direction: row;
+        margin: 20px;
+    }
+
+    .vertical-navigation {
+        display: flex;
+        flex-direction: column;
+        width: 150px; /* 增加导航栏宽度 */
+        background-color: #fff;
+        color: #333;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        max-height: 250px; /* 缩短导航栏高度 */
+    }
+
+    .vertical-navigation a {
+        color: #333;
+        text-decoration: none;
+        margin: 10px 0;
+        font-size: 1.1em;
+    }
+
+    .vertical-navigation .active {
+        background-color: #f1f1f1; /* 悬停时改变背景颜色 */
+    }
+
+    .content {
+        padding: 20px;
+        background-color: #fff;
+        margin-left: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        flex-grow: 1;
+        height: auto; /* 调整高度为自动 */
+        width: 80%;
+    }
+
+    .content h2 {
+        font-size: 2em;
+    }
+
+    .content p {
+        font-size: 1.1em;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    .item-container {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        margin: 10px;
+    }
+
+    .item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        width: 30%;
+        margin-bottom: 10px;
+    }
+
+    .item img {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 4px;
+    }
+
+    .item a {
+        color: #333;
+        text-decoration: none;
+        margin-top: 10px;
+        font-size: 1.1em;
+    }
+
+    .item .name {
+        margin-top: 10px;
+    }
+
+    .item .skill {
+        margin-top: 5px;
+    }
+
+    .pagination {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .page-numbers {
+        display: inline-block;
+        margin: 0 20px;
+    }
+
+    .page-number {
+        margin: 0 5px;
+        cursor: pointer;
+        padding: 5px 10px;
+        background-color: white; /* 默认白色背景 */
+        color: black; /* 字体颜色 */
+        border-radius: 4px; /* 圆角 */
+    }
+
+    .page-number:hover {
+        background-color: #0c88b7; /* 悬停时蓝色稍深 */
+    }
+
+    .page-number:active {
+        background-color: #087ea3; /* 激活时深蓝色 */
+    }
+
+    .page-number.active {
+        background-color: #1da6e0; /* 当前页的背景色蓝色 */
+        color: white; /* 当前页字体变为白色 */
+    }
+
+    button {
+        padding: 10px 20px;
+        margin: 0 10px;
+        cursor: pointer;
+        background-color: #1da6e0; /* 默认按钮背景色 */
+        color: white; /* 字体颜色 */
+        border-radius: 5px; /* 圆角 */
+        border: none; /* 去掉按钮边框 */
+    }
+
+    button:hover {
+        background-color: #0c88b7; /* 悬停时的蓝色 */
+    }
+
+    button:disabled {
+        background-color: #e0e0e0; /* 禁用状态背景色 */
+        color: #ccc; /* 禁用状态字体颜色 */
+        cursor: not-allowed;
+    }
+
+    button:focus {
+        outline: none; /* 去掉按钮的焦点边框 */
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+    <div class="vertical-navigation">
+        <a href="{% url 'web:knowledge' %}" id="linkKnowledge">传承人关系图谱</a>
+        <a href="{% url 'web:inheritorChart' %}" id="linkInheritorChart">传承人图表</a>
+        <a href="{% url 'web:traditionalSkill' %}" id="linkTraditionalSkill">传统技艺</a>
+        <a href="{% url 'web:folkActivities' %}" id="linkFolkActivities">民俗活动</a>
+        <a href="{% url 'web:operaAndMusic' %}" id="linkOperaAndMusic">戏曲与音乐</a>
+    </div>
+
+    <div class="content" id="content">
+        <div class="item-container" id="itemContainer">
+            <!-- Items will be dynamically inserted here -->
+        </div>
+
+        <div class="pagination">
+            <button id="prevPage" onclick="prevPage()" disabled>上一页</button>
+            <div class="page-numbers" id="pageNumbers">
+                <!-- Page numbers will be dynamically inserted here -->
+            </div>
+            <button id="nextPage" onclick="nextPage()">下一页</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+    const items = [
+        {
+            img: "http://whyimg.wentiyun.cn/feiyi/20220919/b9fd3f58-b7cd-4e57-8605-489185b4c805.png",
+            alt: "长沙窑铜官陶瓷烧制技艺",
+            skill: "【长沙窑铜官陶瓷烧制技艺】",
+            name: "刘坤庭",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-1.html"
+        },
+        {
+            img: "http://whyimg.wentiyun.cn/feiyi/20220920/afb9aa59-bba9-46a2-ae32-16cdd7f40db2.png",
+            alt: "土家族织锦技艺",
+            skill: "【临武傩戏】",
+            name: "王太保",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-243.html"
+        },
+        {
+            img: "http://whyimg.wentiyun.cn/feiyi/20220919/cd080211-c1f7-49c8-aba4-c445e10f2432.png",
+            alt: "土家族织锦技艺",
+            skill: "【石雕（菊花石雕）】",
+            name: "曹明珠",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-427.html"
+        },
+        {
+            img: "http://whyimg.wentiyun.cn/feiyi/20220919/ef220f14-3adc-4c6b-a21e-a00c18354631.png",
+            alt: "土家族织锦技艺",
+            skill: "【土家族织锦技艺】",
+            name: "黎承菊",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-25.html"
+        },
+        {
+            img: "http://whyimg.wentiyun.cn/feiyi/20220919/c3dc80f2-e81a-430a-9b1e-b5ce9fc361f9.png",
+            alt: "浏阳花炮制作技艺",
+            skill: "【浏阳花炮制作技艺】",
+            name: "钟自奇",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-4.html"
+        },
+        {
+            img: "http://whyimg.wentiyun.cn/feiyi/20220919/dfa69f4c-7902-4e4e-a71e-da6ddcfdea59.png",
+            alt: "浏阳花炮制作技艺",
+            skill: "【湘绣】",
+            name: "柳建新",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-82.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200701142533_8600.jpg",
+            alt: "浏阳花炮制作技艺",
+            skill: "【苗族银饰锻制技艺】",
+            name: "杨洪江",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-32.html"
+        },
+        {
+            img: "http://whyimg.wentiyun.cn/feiyi/20220919/02f32b1e-8f64-4d9a-b00c-94fb31a5d014.png",
+            alt: "浏阳花炮制作技艺",
+            skill: "【溪砚制作工艺】",
+            name: "曹冠明",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-40.html"
+        },
+        {
+            img: "http://whyimg.wentiyun.cn/feiyi/20220919/d34b778b-5a15-47bf-8ab7-2b8b63681415.png",
+            alt: "浏阳花炮制作技艺",
+            skill: "【纸影戏影偶制作技艺】",
+            name: "吴渊",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-11.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200701132454_4395.jpg",
+            alt: "腊八豆制作技艺",
+            skill: "【腊八豆制作技艺】",
+            name: "陈江柱",
+            link: "http://feiyi.wentiyun.cn/Exhibitor-24.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200701133207_2535.jpg",
+            alt: "李氏唢呐制作技艺",
+            skill: "【李氏唢呐制作技艺】",
+            name: "李科洪",
+            link: "http://feiyi.wentiyun.cn/Exhibitor-26.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200701141742_9913.jpg",
+            alt: "浏阳夏布",
+            skill: "【浏阳夏布】",
+            name: "谭智祥",
+            link: "http://feiyi.wentiyun.cn/Exhibitor-29.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200701142246_0031.jpg",
+            alt: "湘西苗绣",
+            skill: "【湘西苗绣】",
+            name: "王良玉",
+            link: "http://feiyi.wentiyun.cn/Exhibitor-31.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200701182553_0845.jpg",
+            alt: "竹编技艺",
+            skill: "【竹编技艺】",
+            name: "姚元飞",
+            link: "http://feiyi.wentiyun.cn/Exhibitor-61.html"
+        },
+        {
+            img: "http://whyimg.wentiyun.cn/feiyi/20220919/b373b054-6429-49b9-b689-a969ee3313db.jpg",
+            alt: "千两茶制作技艺",
+            skill: "【千两茶制作技艺】",
+            name: "李胜夫",
+            link: "http://feiyi.wentiyun.cn/Exhibitor-18.html"
+        },
+        {
+            img: "http://whyimg.wentiyun.cn/feiyi/20220919/7083d34a-c5f3-4c1c-86e8-6bb47927e895.png",
+            alt: "茯砖茶制作技艺",
+            skill: "【茯砖茶制作技艺】",
+            name: "刘杏益",
+            link: "http://feiyi.wentiyun.cn/Exhibitor-19.html"
+        },
+        {
+            img: "http://whyimg.wentiyun.cn/feiyi/20220919/1bbed4a2-f1d7-475c-9486-ac0b183d4cad.png",
+            alt: "安化天尖茶制作技艺",
+            skill: "【安化天尖茶制作技艺】",
+            name: "肖益平",
+            link: "http://feiyi.wentiyun.cn/Exhibitor-20.html"
+        },
+        {
+            img: "http://whyimg.wentiyun.cn/feiyi/20220919/4bbc6da3-7767-4e90-bf61-360bca91d8ac.png",
+            alt: "麻香糕传统手工技艺",
+            skill: "【麻香糕传统手工技艺】",
+            name: "周国栋",
+            link: "http://feiyi.wentiyun.cn/Exhibitor-22.html"
+        },
+        {
+            img: "http://whyimg.wentiyun.cn/feiyi/20220919/b7f7086a-a962-42d7-96a5-1b74b2d81050.png",
+            alt: "益阳水竹凉席制作技艺",
+            skill: "【益阳水竹凉席制作技艺】",
+            name: "沈安国",
+            link: "http://feiyi.wentiyun.cn/Exhibitor-49.html"
+        },
+        {
+            img: "http://whyimg.wentiyun.cn/feiyi/20220919/1df5c1b4-cacd-4a71-97ee-9baca350c470.png",
+            alt: "岳州扇制作技艺",
+            skill: "【岳州扇制作技艺】",
+            name: "刘正文",
+            link: "http://feiyi.wentiyun.cn/Exhibitor-47.html"
+        },
+        {
+            img: "http://whyimg.wentiyun.cn/feiyi/20220919/b05974db-f0d6-4dde-b379-22bb1d142a72.png",
+            alt: "毛氏菜制作技艺",
+            skill: "【毛氏菜制作技艺】",
+            name: "毛桃芝",
+            link: "http://feiyi.wentiyun.cn/Exhibitor-12.html"
+        },
+        {
+            img: "http://whyimg.wentiyun.cn/feiyi/20220919/55235dc9-9b20-471b-8984-179e81a62895.png",
+            alt: "张新发槟榔制作技艺",
+            skill: "【张新发槟榔制作技艺】",
+            name: "张刚强",
+            link: "http://feiyi.wentiyun.cn/Exhibitor-13.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200715084517_4923.jpg",
+            alt: "杨裕兴面条制作技艺",
+            skill: "【杨裕兴面条制作技艺】",
+            name: "杨顺德",
+            link: "http://feiyi.wentiyun.cn/Exhibitor-9.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200716154913_0689.jpg",
+            alt: "苗族银饰锻制技艺",
+            skill: "【苗族银饰锻制技艺】",
+            name: "龙米谷",
+            link: "http://feiyi.wentiyun.cn/Exhibitor-180.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200714170847_6091.jpg",
+            alt: "土家族织锦技艺",
+            skill: "【土家族织锦技艺】",
+            name: "黎秋梅",
+            link: "http://feiyi.wentiyun.cn/Exhibitor-183.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200714171110_9298.jpg",
+            alt: "土家族织锦技艺",
+            skill: "【土家族织锦技艺】",
+            name: "叶菊秀",
+            link: "http://feiyi.wentiyun.cn/Exhibitor-184.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200714161808_7373.jpg",
+            alt: "江氏正骨术",
+            skill: "【江氏正骨术】",
+            name: "江林",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-171.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200714171353_8535.jpg",
+            alt: "浏阳花炮制作技艺",
+            skill: "【浏阳花炮制作技艺】",
+            name: "黄蔚德",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-186.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200715114945_2621.jpg",
+            alt: "苗族银饰锻制技艺",
+            skill: "【苗族银饰锻制技艺】",
+            name: "麻茂庭",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-187.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200715165638_1271.jpg",
+            alt: "醴陵釉下五彩瓷烧制技艺",
+            skill: "【醴陵釉下五彩瓷烧制技艺】",
+            name: "黄永平",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-189.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200714172440_4919.jpg",
+            alt: "茯砖茶制作技艺",
+            skill: "【茯砖茶制作技艺】",
+            name: "黄燕",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-198.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200714172604_2739.jpg",
+            alt: "蓝印花布印染技艺",
+            skill: "【蓝印花布印染技艺】",
+            name: "蒋振西",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-201.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200714172653_4774.jpg",
+            alt: "长沙窑铜官陶瓷烧制技艺",
+            skill: "【长沙窑铜官陶瓷烧制技艺】",
+            name: "刘志广",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-202.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200714172747_2412.jpg",
+            alt: "土家族吊脚楼营造技艺",
+            skill: "【土家族吊脚楼营造技艺】",
+            name: "万玉其",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-204.html"
+        },
+        {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200714172937_0602.jpg",
+            alt: "滩头手工抄纸技艺",
+            skill: "【滩头手工抄纸技艺】",
+            name: "刘凡弟",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-207.html"
+        },
+                {
+            img: "http://vr-images.oss-cn-shenzhen.aliyuncs.com/s_p_c_20200714113747_5327.jpg",
+            alt: "土家年",
+            skill: "【土家年】",
+            name: "彭家齐",
+            link: "http://www.hunanfeiyi.cn/Exhibitor-81.html"
+        }
+    ];
+
+    let currentPage = 1;  // 当前页
+    const itemsPerPage = 9;  // 每页显示的item数量
+    const totalPages = Math.ceil(items.length / itemsPerPage);  // 总页数
+
+    // 更新分页显示
+    function updatePagination() {
+        // 更新页码的样式
+        const pageNumbers = document.querySelectorAll('.page-number');
+        pageNumbers.forEach((span, index) => {
+            if (index + 1 === currentPage) {
+                span.classList.add('active'); // 为当前页添加active类
+            } else {
+                span.classList.remove('active'); // 移除其他页的active类
+            }
+        });
+
+        // 禁用上一页和下一页按钮
+        const prevButton = document.getElementById('prevPage');
+        const nextButton = document.getElementById('nextPage');
+
+        if (currentPage === 1) {
+            prevButton.disabled = true;
+        } else {
+            prevButton.disabled = false;
+        }
+
+        if (currentPage === totalPages) {
+            nextButton.disabled = true;
+        } else {
+            nextButton.disabled = false;
+        }
+    }
+
+    function goToPage(page) {
+        if (page >= 1 && page <= totalPages) {
+            currentPage = page;
+            updatePagination();
+            displayItems();
+        }
+    }
+
+    function prevPage() {
+        if (currentPage > 1) {
+            currentPage--;
+            updatePagination();
+            displayItems();
+        }
+    }
+
+    function nextPage() {
+        if (currentPage < totalPages) {
+            currentPage++;
+            updatePagination();
+            displayItems();
+        }
+    }
+
+    function displayItems() {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const itemsToDisplay = items.slice(startIndex, endIndex);
+
+        const itemContainer = document.getElementById('itemContainer');
+        itemContainer.innerHTML = ''; // 清空容器
+
+        itemsToDisplay.forEach(item => {
+            const itemElement = document.createElement('div');
+            itemElement.className = 'item';
+            itemElement.innerHTML = `
+                <img src="${item.img}" alt="${item.alt}">
+                <a href="${item.link}" target="_blank" class="skill">${item.skill}</a>
+                <a href="${item.link}" target="_blank" class="name">${item.name}</a>
+            `;
+            itemContainer.appendChild(itemElement);
+        });
+    }
+
+    function generatePageNumbers() {
+        const pageNumbersContainer = document.getElementById('pageNumbers');
+        pageNumbersContainer.innerHTML = ''; // 清空容器
+
+        for (let i = 1; i <= totalPages; i++) {
+            const pageNumber = document.createElement('span');
+            pageNumber.className = 'page-number';
+            pageNumber.textContent = i;
+            pageNumber.onclick = () => goToPage(i);
+            pageNumbersContainer.appendChild(pageNumber);
+        }
+    }
+
+    updatePagination();
+    displayItems();
+    generatePageNumbers();
+    goToPage(1);
+
+    // 获取当前路径
+    const currentPath = window.location.pathname;
+
+    // 获取所有的链接
+    const links = document.querySelectorAll('.vertical-navigation a');
+
+    // 遍历每个链接，检查它的 href 是否匹配当前路径
+    links.forEach(link => {
+        // 获取链接的 href 属性
+        const linkHref = link.getAttribute('href');
+
+        // 如果链接的 href 与当前路径匹配，添加 active 类
+        if (currentPath === linkHref) {
+            link.classList.add('active');
+        }
+    });
+</script>
+{% endblock %}

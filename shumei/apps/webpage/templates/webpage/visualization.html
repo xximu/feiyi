@@ -1,0 +1,1185 @@
+﻿{% extends "base.html" %}
+{% load static %}
+{% block title %}非遗展品页面{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'webpage/css/comon.css' %}">
+<script type="text/javascript" src="{% static 'webpage/js/jquery.js' %}"></script>
+<style>
+    .mainbox {
+        width: 100%;
+        height: 900px;
+        background-image: url('{% static 'images/bg.jpg' %}');
+        color: #fff;
+        background-color: #1166e5;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="loading">
+    <div class="loadbox"><img src="{% static 'webpage/images/loading.gif' %}"> 页面加载中...</div>
+</div>
+<div class="mainbox">
+    <div class="head">
+        <h1><a href="http://www.hunanfeiyi.cn/"></a>湖南省非物质文化遗产</h1>
+        <div class="time" id="showTime">2019/12/05 16:16:54</div>
+        <script>
+            var t = null;
+            t = setTimeout(time, 1000);//開始运行
+            function time() {
+                clearTimeout(t);//清除定时器
+                dt = new Date();
+                var y = dt.getFullYear();
+                var mt = dt.getMonth() + 1;
+                var day = dt.getDate();
+                var h = dt.getHours();//获取时
+                var m = dt.getMinutes();//获取分
+                var s = dt.getSeconds();//获取秒
+                var t = null;
+                document.getElementById("showTime").innerHTML = y + "/" + Appendzero(mt) + "/" + Appendzero(day) + " " + Appendzero(h) + ":" + Appendzero(m) + ":" + Appendzero(s) + "";
+
+                function Appendzero(obj) {
+                    if (obj < 10) return "0" + "" + obj;
+                    else return obj;
+                }
+
+                t = setTimeout(time, 1000); //设定定时器，循环运行
+            }
+        </script>
+    </div>
+    <ul class="clearfix">
+        <li style="height:600px">
+            <div class="boxall" style="height: calc(58% - .15rem)">
+                <div class="alltitle">非遗空间分布影响因素（q值）</div>
+                <div class=" boxnav " id="echarts4">
+                </div>
+            </div>
+            <div class="boxall" style="height: calc(38% - .15rem)">
+                <div class="alltitle">湖南申遗数量</div>
+                <div class="boxnav" id="echarts1"></div>
+            </div>
+            <div class="boxall" style="height: calc(42% - .15rem)">
+                <div class="alltitle">非遗类型</div>
+                <div class="boxnav" id="echarts3"></div>
+            </div>
+        </li>
+        <li style="height:600px">
+            <div class="boxall" style="height: calc(20% - .15rem)">
+                <ul class="row h100 clearfix">
+                    <li class="col-6">
+                        <div class="sqzs h100">
+                            <p>湖南非遗总数</p>
+                            <h1><span>4182</span>个</h1>
+                        </div>
+                    </li>
+                    <li class="col-6">
+                        <ul class="row h100 clearfix">
+                            <li class="col-4">
+                                <div class="tit01">市县级占比</div>
+                                <div class="piebox" id="pe01"></div>
+                            </li>
+                            <li class="col-4">
+                                <div class="tit01">省级占比</div>
+                                <div class="piebox" id="pe02"></div>
+                            </li>
+                            <li class="col-4">
+                                <div class="tit01">国家级占比</div>
+                                <div class="piebox" id="pe03"></div>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div id="hunanmap" class="middle_bottom" style="height: 700px"></div>
+        </li>
+        <li style="height:600px">
+            <div class="boxall" style="height: calc(33.333% - .15rem)">
+                <div class="alltitle">湖南省文物机构及从业人员情况</div>
+                <div class="boxnav" id="echarts5"></div>
+            </div>
+                <div class="boxall" style="height: calc(33.333% - .15rem)">
+                    <div class="alltitle">地级市分布</div>
+                    <div class="boxnav" style="overflow-y: auto;" id="">
+                        <table border="0" cellspacing="0">
+                            <tr>
+                                <th></th>
+                                <th>民间文学</th>
+                                <th>传统戏剧</th>
+                                <th>民俗</th>
+                                <th>总数/总占比</th>
+                            </tr>
+                            <tr>
+                                <th>株洲</th>
+                                <td>2</td>
+                                <td>3</td>
+                                <td>2</td>
+                                <td>7/3.0%</td>
+                            </tr>
+                            <tr>
+                                <th>湘潭</th>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>2</td>
+                                <td>4/1.7%</td>
+                            </tr>
+                            <tr>
+                                <th>衡阳</th>
+                                <td>0</td>
+                                <td>11</td>
+                                <td>4</td>
+                                <td>15/6.5%</td>
+                            </tr>
+                            <tr>
+                                <th>岳阳</th>
+                                <td>2</td>
+                                <td>7</td>
+                                <td>4</td>
+                                <td>13/5.6%</td>
+                            </tr>
+                            <tr>
+                                <th>常德</th>
+                                <td>9</td>
+                                <td>5</td>
+                                <td>2</td>
+                                <td>16/6.9%</td>
+                            </tr>
+                            <tr>
+                                <th>张家界</th>
+                                <td>1</td>
+                                <td>6</td>
+                                <td>5</td>
+                                <td>12/5.2%</td>
+                            </tr>
+                            <tr>
+                                <th>益阳</th>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>3/1.3%</td>
+                            </tr>
+                            <tr>
+                                <th>娄底</th>
+                                <td>2</td>
+                                <td>6</td>
+                                <td>4</td>
+                                <td>12/5.2%</td>
+                            </tr>
+                            <tr>
+                                <th>郴州</th>
+                                <td>3</td>
+                                <td>7</td>
+                                <td>10</td>
+                                <td>20/8.7%</td>
+                            </tr>
+                            <tr>
+                                <th>永州</th>
+                                <td>5</td>
+                                <td>4</td>
+                                <td>9</td>
+                                <td>18/7.8%</td>
+                            </tr>
+                            <tr>
+                                <th>长沙</th>
+                                <td>1</td>
+                                <td>17</td>
+                                <td>3</td>
+                                <td>21/9.1%</td>
+                            </tr>
+                            <tr>
+                                <th>邵阳</th>
+                                <td>2</td>
+                                <td>8</td>
+                                <td>11</td>
+                                <td>21/9.1%</td>
+                            </tr>
+                            <tr>
+                                <th>怀化</th>
+                                <td>3</td>
+                                <td>13</td>
+                                <td>8</td>
+                                <td>24/10.4%</td>
+                            </tr>
+                            <tr>
+                                <th>湘西</th>
+                                <td>28</td>
+                                <td>6</td>
+                                <td>23</td>
+                                <td>57/24.7%</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            <div class="boxall" style="height: calc(42% - .15rem)">
+                <div class="alltitle">非遗文献总体趋势分析</div>
+                <div class="boxnav" id="echarts2"></div>
+            </div>
+            <div class="boxall" style="height: calc(33.333% - .15rem)">
+                <div class="alltitle">非遗资源类型分布</div>
+                <div class="boxnav" id="echarts6" style="height:calc(100% - .3rem);"></div>
+            </div>
+        </li>
+    </ul>
+</div>
+{% endblock %}
+{% block js %}
+    <script type="text/javascript" src="{% static 'webpage/js/echarts.min.js' %}"></script>
+    <script>
+        function echarts_1() {
+            var myChart = echarts.init(document.getElementById('echarts1'));
+            var option = {
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {type: 'shadow'},
+                },
+                "grid": {
+                    "top": "20%",
+                    "right": "50",
+                    "bottom": "20",
+                    "left": "30",
+                },
+                legend: {
+                    data: ['国家级非遗数', '省级非遗数', '国家级传人数', '省级传人数', '研究数', '非遗机构数'],
+                    right: 'center', width: '100%',
+                    textStyle: {
+                        color: "#fff"
+                    },
+                    itemWidth: 12,
+                    itemHeight: 10,
+                },
+                "xAxis": [
+                    {
+                        "type": "category",
+                        data: ['2016', '2018', '2020', '2022'],
+                        axisLine: {lineStyle: {color: "rgba(255,255,255,.1)"}},
+                        axisLabel: {
+                            textStyle: {color: "rgba(255,255,255,.7)", fontSize: '14',},
+                        },
+                    },
+                ],
+                "yAxis": [
+                    {
+                        "type": "value",
+                        "name": "单位万",
+                        axisTick: {show: false},
+                        splitLine: {
+                            show: false,
+                        },
+                        "axisLabel": {
+                            "show": true,
+                            fontSize: 14,
+                            color: "rgba(255,255,255,.6)"
+                        },
+                        axisLine: {
+                            min: 0,
+                            max: 10,
+                            lineStyle: {color: 'rgba(255,255,255,.1)'}
+                        },
+                    },
+                    {
+                        "type": "value",
+                        "name": "增速",
+                        "show": true,
+                        "axisLabel": {
+                            "show": true,
+                            fontSize: 14,
+                            formatter: "{value} %",
+                            color: "rgba(255,255,255,.6)"
+                        },
+                        axisTick: {show: false},
+                        axisLine: {lineStyle: {color: 'rgba(255,255,255,.1)'}},
+                        splitLine: {show: true, lineStyle: {color: 'rgba(255,255,255,.1)'}},
+                    },
+                ],
+                "series": [
+                    {
+                        "name": "国家级非遗数",
+                        "type": "bar",
+                        "data": [118, 118, 137, 137],
+                        "barWidth": "15%",
+                        "itemStyle": {
+                            "normal": {
+                                barBorderRadius: 15,
+                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                    offset: 0,
+                                    color: '#8bd46e'
+                                }, {
+                                    offset: 1,
+                                    color: '#09bcb7'
+                                }]),
+                            }
+                        },
+                        "barGap": "0.2"
+                    },
+                    {
+                        "name": "省级非遗数",
+                        "type": "bar",
+                        "data": [324, 324, 410, 410],
+                        "barWidth": "15%",
+                        "itemStyle": {
+                            "normal": {
+                                barBorderRadius: 15,
+                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                    offset: 0,
+                                    color: '#248ff7'
+                                }, {
+                                    offset: 1,
+                                    color: '#6851f1'
+                                }]),
+                            }
+                        },
+                        "barGap": "0.2"
+                    },
+                    {
+                        "name": "国家级传人",
+                        "type": "bar",
+                        "data": [60, 60, 121, 121],
+                        "barWidth": "15%",
+                        "itemStyle": {
+                            "normal": {
+                                barBorderRadius: 15,
+                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                    offset: 0,
+                                    color: '#fccb05'
+                                }, {
+                                    offset: 1,
+                                    color: '#f5804d'
+                                }]),
+                            }
+                        },
+                        "barGap": "0.2"
+                    },
+                    {
+                        "name": "省级传人",
+                        "type": "line",
+                        smooth: true,
+                        "yAxisIndex": 1,
+                        "data": [247, 247, 304, 304],
+                        lineStyle: {
+                            normal: {
+                                width: 2
+                            },
+                        },
+                        "itemStyle": {
+                            "normal": {
+                                "color": "#86d370",
+                            }
+                        },
+                        symbol: 'circle',
+                        symbolSize: 8,
+                        animation: true,
+                        animationDuration: 3000,
+                        animationEasing: 'cubicInOut',
+                    },
+                    {
+                        "name": "非遗研究文献",
+                        "type": "line",
+                        "yAxisIndex": 1,
+                        "data": [32, 62, 108, 181],
+                        lineStyle: {
+                            normal: {
+                                width: 2
+                            },
+                        },
+                        "itemStyle": {
+                            "normal": {
+                                "color": "#3496f8",
+                            }
+                        },
+                        smooth: true,
+                        symbol: 'circle',
+                        symbolSize: 8,
+                        animation: true,
+                        animationDuration: 3000,
+                        animationEasing: 'cubicInOut',
+                    },
+                    {
+                        "name": "非遗保护机构",
+                        "type": "line",
+                        "yAxisIndex": 1,
+                        "data": [131, 130, 214, 214],
+                        lineStyle: {
+                            normal: {
+                                width: 2
+                            },
+                        },
+                        "itemStyle": {
+                            "normal": {
+                                "color": "#fbc30d",
+                            }
+                        },
+                        smooth: true,
+                        symbol: 'circle',
+                        symbolSize: 8,
+                        animation: true,
+                        animationDuration: 3000,
+                        animationEasing: 'cubicInOut',
+                    }
+                ]
+            };
+            myChart.setOption(option);
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+        }
+        function echarts_2() {
+            var myChart = echarts.init(document.getElementById('echarts2'));
+            option = {
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {type: 'shadow'},
+                },
+                grid: {
+                    left: '0',
+                    top: '30',
+                    right: '10',
+                    bottom: '-20',
+                    containLabel: true
+                },
+                legend: {
+                    data: ['字段1', '字段2'],
+                    right: 'center',
+                    top: 0,
+                    textStyle: {
+                        color: "#fff"
+                    },
+                    itemWidth: 12,
+                    itemHeight: 10,
+                },
+                xAxis: [{
+                    type: 'category',
+                    boundaryGap: false,
+                    axisLabel: {
+                        rotate: -90,
+                        textStyle: {
+                            color: "rgba(255,255,255,.6)",
+                            fontSize: 14,
+                        },
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            color: 'rgba(255,255,255,.1)'
+                        }
+                    },
+                    data: ['2011年', '2012年', '2013年', '2014年', '2015年', '2016年', '2017年', '2018年', '2019年', '2020年', '2021年', '2022年']
+                }, {
+                    axisPointer: {show: false},
+                    axisLine: {show: false},
+                    position: 'bottom',
+                    offset: 20,
+                }],
+                yAxis: [{
+                    type: 'value',
+                    axisTick: {show: false},
+                    axisLine: {
+                        lineStyle: {
+                            color: 'rgba(255,255,255,.1)'
+                        }
+                    },
+                    axisLabel: {
+                        formatter: "{value} %",
+                        textStyle: {
+                            color: "rgba(255,255,255,.6)",
+                            fontSize: 14,
+                        },
+                    },
+                    splitLine: {
+                        lineStyle: {
+                            color: 'rgba(255,255,255,.1)'
+                        }
+                    }
+                }],
+                series: [
+                    {
+                        name: '参考文献',
+                        type: 'line',
+                        smooth: true,
+                        symbol: 'circle',
+                        symbolSize: 5,
+                        showSymbol: true,
+                        lineStyle: {
+                            normal: {
+                                color: 'rgba(228, 228, 126, 1)',
+                                width: 2
+                            }
+                        },
+                        areaStyle: {
+                            normal: {
+                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                    offset: 0,
+                                    color: 'rgba(228, 228, 126, .2)'
+                                }, {
+                                    offset: 1,
+                                    color: 'rgba(228, 228, 126, 0)'
+                                }], false),
+                                shadowColor: 'rgba(0, 0, 0, 0.1)',
+                            }
+                        },
+                        itemStyle: {
+                            normal: {
+                                color: 'rgba(228, 228, 126, 1)',
+                                borderColor: 'rgba(228, 228, 126, .1)',
+                                borderWidth: 12
+                            }
+                        },
+                        data: [26, 23, 20, 35, 44, 35, 45, 52, 48, 72, 69, 46]
+                    },
+                    {
+                        name: '引证文献',
+                        type: 'line',
+                        smooth: true,
+                        symbol: 'circle',
+                        symbolSize: 5,
+                        showSymbol: true,
+                        lineStyle: {
+                            normal: {
+                                color: 'rgba(255, 128, 128, 1)',
+                                width: 2
+                            }
+                        },
+                        areaStyle: {
+                            normal: {
+                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                    offset: 0,
+                                    color: 'rgba(255, 128, 128,.2)'
+                                }, {
+                                    offset: 1,
+                                    color: 'rgba(255, 128, 128, 0)'
+                                }], false),
+                                shadowColor: 'rgba(0, 0, 0, 0.1)',
+                            }
+                        },
+                        itemStyle: {
+                            normal: {
+                                color: 'rgba(255, 128, 128, 1)',
+                                borderColor: 'rgba(255, 128, 128, .1)',
+                                borderWidth: 12
+                            }
+                        },
+                        data: [0, 0, 0, 0, 0, 0, 0, 3, 28, 31, 77, 102],
+                        animation: true,
+                        animationDuration: 1500,
+                        animationEasing: 'linear',
+                        animationRepeat: true,
+                        animationDelay: function (index) {
+                            return index * 500;
+                        }
+                    },
+                ]
+            };
+            myChart.setOption(option);
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+        }
+        function echarts_3() {
+            var myChart = echarts.init(document.getElementById('echarts3'));
+            var option = {
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {type: 'shadow'},
+                },
+                legend: {
+                    data: ['字段1', '字段2', '字段3'],
+                    right: 'center',
+                    top: 0,
+                    textStyle: {
+                        color: "#fff"
+                    },
+                },
+                grid: {
+                    left: '0',
+                    right: '20',
+                    bottom: '0',
+                    top: '10%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    data: ['民间文学', '传统音乐', '传统舞蹈', '传统戏剧', '曲艺', '传统体育', '传统美术', '传统手工技艺', '传统医药', '民俗'],
+                    axisLine: {
+                        lineStyle: {
+                            color: 'rgba(255,255,255,0.3)'
+                        }
+                    },
+                    axisLabel: {
+                        formatter: function (value) {
+                            return value.split("").join("\n");
+                        },
+                        textStyle: {
+                            color: "rgba(255,255,255,.6)",
+                            fontSize: 14,
+                        }
+                    },
+                },
+                yAxis: {
+                    type: 'value',
+                    splitNumber: 4,
+                    axisTick: {show: false},
+                    splitLine: {
+                        show: true,
+                        lineStyle: {
+                            color: 'rgba(255,255,255,0.1)'
+                        }
+                    },
+                    axisLabel: {
+                        textStyle: {
+                            color: "rgba(255,255,255,.6)",
+                            fontSize: 14,
+                        }
+                    },
+                    axisLine: {show: false},
+                },
+                series: [
+                    {
+                        name: '数量',
+                        type: 'bar',
+                        stack: 'a',
+                        barWidth: '30', barGap: 0,
+                        itemStyle: {
+                            normal: {
+                                color: '#8bd46e',
+                            }
+                        },
+                        data: [60, 55, 56, 95, 26, 35, 55, 143, 27, 88],
+                        animation: true,
+                        animationDuration: 1500,
+                        animationEasing: 'cubicInOut',
+                        animationDelay: function (index) {
+                            return index * 300; // 每个柱子有300ms的动画延迟
+                        }
+                    },
+                    {
+                        name: '占比',
+                        type: 'bar',
+                        stack: 'a',
+                        barWidth: '30', barGap: 0,
+                        itemStyle: {
+                            normal: {
+                                color: '#f5804d',
+                                barBorderRadius: 0,
+                            }
+                        },
+                        data: [9.38, 8.59, 8.75, 14.84, 4.06, 5.47, 8.59, 22.34, 4.22, 13.75],
+                        animation: true,
+                        animationDuration: 1500,
+                        animationEasing: 'cubicInOut',
+                        animationDelay: function (index) {
+                            return index * 300;
+                        }
+                    },
+                ]
+            };
+            myChart.setOption(option);
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+        }
+        function echarts_5() {
+            var myChart = echarts.init(document.getElementById('echarts5'));
+            var option = {
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {type: 'shadow'},
+                },
+                grid: {
+                    top: "15%",
+                    right: "10%",
+                    bottom: "20",
+                    left: "10%",
+                },
+                legend: {
+                    data: ['字段1', '字段2'],
+                    right: 'center',
+                    top: 0,
+                    textStyle: {
+                        color: "#fff"
+                    },
+                },
+                xAxis: [{
+                    type: "category",
+                    data: ['2015', '2016', '2017', '2018'],
+                    axisLine: {lineStyle: {color: "rgba(255,255,255,.1)"}},
+                    axisLabel: {
+                        textStyle: {color: "rgba(255,255,255,.7)", fontSize: '14'},
+                    },
+                }],
+                yAxis: [
+                    {
+                        type: "value",
+                        name: "单位1",
+                        splitLine: {show: false},
+                        axisTick: {show: false},
+                        axisLabel: {
+                            show: true,
+                            color: "rgba(255,255,255,.6)"
+                        },
+                        axisLine: {lineStyle: {color: 'rgba(255,255,255,.1)'}},
+                    },
+                    {
+                        type: "value",
+                        name: "单位2",
+                        show: true,
+                        axisTick: {show: false},
+                        axisLabel: {
+                            show: true,
+                            formatter: "{value} %",
+                            color: "rgba(255,255,255,.6)"
+                        },
+                        axisLine: {lineStyle: {color: 'rgba(255,255,255,.1)'}},
+                        splitLine: {show: true, lineStyle: {color: 'rgba(255,255,255,.1)'}},
+                    },
+                ],
+                series: [
+                    {
+                        name: "文物机构从业人员",
+                        type: "bar",
+                        data: [4533, 4813, 5037, 4906],
+                        barWidth: "20%",
+                        itemStyle: {
+                            normal: {
+                                barBorderRadius: 15,
+                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                    {offset: 0, color: '#fccb05'},
+                                    {offset: 1, color: '#f5804d'}
+                                ]),
+                            }
+                        },
+                        barGap: "0",
+                        animation: true,
+                        animationDuration: 1500,
+                        animationEasing: 'cubicInOut',
+                        animationDelay: function (index) {
+                            return index * 300; // 动态延迟
+                        }
+                    },
+                    {
+                        name: "机构数",
+                        type: "line",
+                        yAxisIndex: 1,
+                        data: [265, 268, 276, 276],
+                        lineStyle: {normal: {width: 2}},
+                        itemStyle: {normal: {color: "#ff3300"}},
+                        smooth: true,
+                        animationDuration: 1500,
+                        animationEasing: 'cubicInOut',
+                    }
+                ]
+            };
+            myChart.setOption(option);
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+        }
+        function echarts_4() {
+            var myChart = echarts.init(document.getElementById('echarts4'));
+            var option = {
+                grid: {
+                    left: '2%',
+                    top: '1%',
+                    right: '5%',
+                    bottom: '0%',
+                    containLabel: true
+                },
+                xAxis: [{
+                    show: false,
+                }],
+                yAxis: [{
+                    axisTick: 'none',
+                    axisLine: 'none',
+                    offset: '7',
+                    axisLabel: {
+                        textStyle: {
+                            color: 'rgba(255,255,255,.6)',
+                            fontSize: '14',
+                        }
+                    },
+                    data: ['地形地貌', '民族', '人口', '交通', '河流', '文化', '经济发展水平']
+                }],
+                series: [{
+                    name: '条',
+                    type: 'bar',
+                    yAxisIndex: 0,
+                    data: [25, 30, 34, 40, 43, 48, 52, 56, 70],
+                    label: {
+                        normal: {
+                            show: true,
+                            position: 'right',
+                            formatter: function (param) {
+                                return param.value + '%';
+                            },
+                            textStyle: {
+                                color: 'rgba(255,255,255,.8)',
+                                fontSize: '12',
+                            }
+                        }
+                    },
+                    barWidth: 15,
+                    itemStyle: {
+                        normal: {
+                            color: new echarts.graphic.LinearGradient(1, 0, 0, 0, [
+                                {offset: 0, color: '#03c893'},
+                                {offset: 1, color: '#0091ff'}
+                            ]),
+                            barBorderRadius: 15,
+                        }
+                    },
+                    z: 2,
+                    animation: true,
+                    animationDuration: 1500,
+                    animationEasing: 'cubicInOut',
+                    animationDelay: function (index) {
+                        return index * 300;
+                    }
+                }]
+            };
+            myChart.setOption(option);
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+        }
+        function echarts_6() {
+            var myChart = echarts.init(document.getElementById('echarts6'));
+            var option = {
+                title: {
+                    text: '5132',
+                    subtext: '总体',
+                    x: 'center',
+                    y: '40%',
+                    textStyle: {
+                        color: '#fff',
+                        fontSize: 22,
+                        lineHeight: 10,
+                    },
+                    subtextStyle: {
+                        color: '#90979c',
+                        fontSize: 16,
+                        lineHeight: 10,
+                    },
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{b} : {c} ({d}%)"
+                },
+                series: [{
+                    name: '访问来源',
+                    type: 'pie',
+                    radius: ['50%', '70%'],
+                    center: ['50%', '50%'],
+                    color: ['rgb(131,249,103)', '#FBFE27', '#FE5050', '#1DB7E5'],
+                    data: [
+                        {value: 79, name: "期刊"},
+                        {value: 41, name: "硕士论文"},
+                        {value: 30, name: "报纸"}
+                    ].sort(function (a, b) {
+                        return a.value - b.value
+                    }),
+                    roseType: 'radius',
+                    animationDuration: 1500,
+                    animationEasing: 'cubicInOut',
+                }]
+            };
+            myChart.setOption(option);
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+        }
+        function pe01() {
+            var myChart = echarts.init(document.getElementById('pe01'));
+            var txt = 81;
+            var option = {
+                title: {
+                    text: txt + '%',
+                    x: 'center',
+                    y: 'center',
+                    textStyle: {
+                        fontWeight: 'normal',
+                        color: '#fff',
+                        fontSize: '18'
+                    }
+                },
+                color: 'rgba(255,255,255,.3)',
+                series: [{
+                    name: 'Line 1',
+                    type: 'pie',
+                    clockWise: true,
+                    radius: ['65%', '80%'],
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: false
+                            },
+                            labelLine: {
+                                show: false
+                            }
+                        }
+                    },
+                    hoverAnimation: false,
+                    animationDuration: 1500,
+                    animationEasing: 'cubicInOut',
+                    animationDelay: function (index) {
+                        return index * 500;
+                    },
+                    data: [{
+                        value: txt,
+                        name: '已使用',
+                        itemStyle: {
+                            normal: {
+                                color: '#eaff00',
+                                label: {show: false},
+                                labelLine: {show: false}
+                            }
+                        }
+                    }, {
+                        name: '未使用',
+                        value: 100 - txt
+                    }]
+                }]
+            };
+            myChart.setOption(option);
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+        }
+        function pe02() {
+            var myChart = echarts.init(document.getElementById('pe02'));
+            var txt = 17;
+            var option = {
+                title: {
+                    text: txt + '%',
+                    x: 'center',
+                    y: 'center',
+                    textStyle: {
+                        fontWeight: 'normal',
+                        color: '#fff',
+                        fontSize: '18'
+                    }
+                },
+                color: 'rgba(255,255,255,.3)',
+                series: [{
+                    name: 'Line 1',
+                    type: 'pie',
+                    clockWise: true,
+                    radius: ['65%', '80%'],
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: false
+                            },
+                            labelLine: {
+                                show: false
+                            }
+                        }
+                    },
+                    hoverAnimation: false,
+                    animationDuration: 1500,
+                    animationEasing: 'cubicInOut',
+                    animationDelay: function (index) {
+                        return index * 500;
+                    },
+                    data: [{
+                        value: txt,
+                        name: '已使用',
+                        itemStyle: {
+                            normal: {
+                                color: '#ea4d4d',
+                                label: {show: false},
+                                labelLine: {show: false}
+                            }
+                        }
+                    }, {
+                        name: '未使用',
+                        value: 100 - txt
+                    }]
+                }]
+            };
+            myChart.setOption(option);
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+        }
+        function pe03() {
+            var myChart = echarts.init(document.getElementById('pe03'));
+            var txt = 2;
+            var option = {
+                title: {
+                    text: txt + '%',
+                    x: 'center',
+                    y: 'center',
+                    textStyle: {
+                        fontWeight: 'normal',
+                        color: '#fff',
+                        fontSize: '18'
+                    }
+                },
+                color: 'rgba(255,255,255,.3)',
+                series: [{
+                    name: 'Line 1',
+                    type: 'pie',
+                    clockWise: true,
+                    radius: ['65%', '80%'],
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: false
+                            },
+                            labelLine: {
+                                show: false
+                            }
+                        }
+                    },
+                    hoverAnimation: false,
+                    animationDuration: 1500,
+                    animationEasing: 'cubicInOut',
+                    animationDelay: function (index) {
+                        return index * 500;
+                    },
+                    data: [{
+                        value: txt,
+                        name: '已使用',
+                        itemStyle: {
+                            normal: {
+                                color: '#395ee6',
+                                label: {show: false},
+                                labelLine: {show: false}
+                            }
+                        }
+                    }, {
+                        name: '未使用',
+                        value: 100 - txt
+                    }]
+                }]
+            };
+            myChart.setOption(option);
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+        }
+        $(document).ready(function () {
+            var whei = $(window).width()
+            $("html").css({fontSize: whei / 20})
+            $(window).resize(function () {
+                var whei = $(window).width()
+                $("html").css({fontSize: whei / 20})
+            });
+        });
+        $(document).ready(function () {
+            echarts_1();
+            echarts_2();
+            echarts_3();
+            echarts_4();
+            echarts_5();
+            echarts_6();
+            pe01();
+            pe02();
+            pe03();
+            $(".loading").fadeOut();
+        });
+    </script>
+    <script src="{% static 'webpage/js/jquery-1.8.3.min.js' %}"></script>
+    <script src="https://img.hcharts.cn/highmaps/highmaps.js"></script>
+    <script src="https://data.jianshukeji.com/geochina/hunan.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts-en.min.js"></script>
+    <script type="text/javascript">
+        function OSnow() {
+            var agent = navigator.userAgent.toLowerCase();
+            var isMac = /macintosh|mac os x/i.test(navigator.userAgent);
+            if (agent.indexOf("win32") >= 0 || agent.indexOf("wow32") >= 0) {
+                $(".main").css("height", "880px");
+            }
+            if (agent.indexOf("win64") >= 0 || agent.indexOf("wow64") >= 0) {
+                $(".main").css("height", "880px");
+            }
+            if (isMac) {
+
+            }
+        }
+        OSnow();
+        function numInit() {
+            $('.counter-value').each(function () {
+                $(this).prop('Counter', 0).animate({
+                    Counter: $(this).text()
+                }, {
+                    duration: 2500,
+                    easing: 'swing',
+                    step: function (now) {
+                        $(this).text(now.toFixed(2));
+                    }
+                });
+            });
+        }
+        var data = [
+            {"name": "长沙", "value": 46, "national": 7, "municipal": 58, "provincial": 12},
+            {"name": "株洲", "value": 81, "national": 2, "municipal": 65, "provincial": 17},
+            {"name": "湘潭", "value": 94, "national": 10, "municipal": 9, "provincial": 2},
+            {"name": "衡阳", "value": 40, "national": 6, "municipal": 105, "provincial": 20},
+            {"name": "邵阳", "value": 67, "national": 13, "municipal": 90, "provincial": 28},
+            {"name": "岳阳", "value": 38, "national": 3, "municipal": 39, "provincial": 8},
+            {"name": "常德", "value": 50, "national": 11, "municipal": 55, "provincial": 26},
+            {"name": "张家界", "value": 48, "national": 15, "municipal": 57, "provincial": 13},
+            {"name": "益阳", "value": 77, "national": 15, "municipal": 10, "provincial": 30},
+            {"name": "郴州", "value": 78, "national": 4, "municipal": 78, "provincial": 16},
+            {"name": "永州", "value": 57, "national": 3, "municipal": 100, "provincial": 25},
+            {"name": "怀化", "value": 83, "national": 12, "municipal": 100, "provincial": 33},
+            {"name": "娄底", "value": 43, "national": 8, "municipal": 50, "provincial": 16},
+            {"name": "湘西", "value": 75, "national": 22, "municipal": 90, "provincial": 62}
+        ];
+        var option4 = {
+            title: {
+                text: ''
+            },
+            tooltip: {
+                formatter: function () {
+                    var city = this.point.name;
+                    var national = this.point.national;
+                    var municipal = this.point.municipal;
+                    var provincial = this.point.provincial;
+                    return '<b>' + city + '</b><br>' +
+                        '国家级非遗传承人数: ' + national + '<br>' +
+                        '市级非遗传承人数: ' + municipal + '<br>' +
+                        '省级非遗传承人数: ' + provincial;
+                },
+                style: {
+                    fontSize: '16px',
+                }
+            },
+            chart: {
+                backgroundColor: 'transparent',
+            },
+            legend: {
+                enabled: true,
+            },
+            colorAxis: {
+                minColor: '#0666D5',
+                maxColor: '#062A6C'
+            },
+            series: [{
+                data: data,
+                borderColor: '#6099EC',
+                borderWidth: 3,
+                mapData: Highcharts.maps['cn/hunan'],
+                name: '',
+                joinBy: ['name'],
+                states: {
+                    enabled: true,
+                    hover: {
+                        color: '#F3DB5C'
+                    }
+                },
+                dataLabels: {
+                    enabled: true,
+                    color: '#FFFFFF',
+                    style: {
+                        fontSize: '18px',
+                        fontWeight: 'bold'
+                    },
+                    format: '{point.name}'
+                },
+                cursor: 'pointer',
+            }]
+        };
+        var map = new Highcharts.Map('hunanmap', option4);
+    </script>
+{% endblock %}
+
+
+
+

@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}非遗小助手问答页面{% endblock %}
+
+{% block css %}
+    <style>
+        .carousel {
+            display: flex;
+            overflow: hidden;
+            height: 500px;
+            position: relative;
+            margin-top: -10px;
+        }
+
+        .carousel img {
+            width: 100%;
+            height: auto;
+            display: none;
+        }
+
+        .content {
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.5); /* 半透明黑色背景 */
+            margin: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .content h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #fff; /* 科技感蓝色 */
+        }
+
+        .content p.intro {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+            color: #ddd;
+            line-height: 1.6;
+        }
+
+        .content .input-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .content input[type="text"] {
+            flex: 1;
+            padding: 20px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            font-size: 1.2em;
+            outline: none;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            color: #fff;
+        }
+
+        .content input[type="text"]:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .content input[type="text"]::placeholder {
+            color: #fff; /* 将提示字的颜色设置为白色 */
+        }
+
+        .content button {
+            padding: 20px 20px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #4f7ef4, #1a2a3a); /* 科技感渐变背景 */
+            color: #fff;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            margin-left: 10px;
+        }
+
+        .content button:hover {
+            background: linear-gradient(135deg, #1a2a3a, #4f7ef4); /* 渐变方向改变 */
+            transform: translateY(-3px);
+        }
+
+        .content button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .content p#result {
+            margin-top: 30px;
+            width: 80%;
+            text-align: left;
+            font-size: 1.3em;
+            color: #ddd;
+            line-height: 1.6;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <h1>非遗知识小助手</h1>
+        <p class="intro">
+            遇见非遗智慧导航，您的专属非遗知识小助手！无论是想要了解传统技艺的精湛之处，还是探索民俗文化的独特魅力，只需简单对话，非遗知识小助手便能即刻响应，以生动有趣的方式为您呈现。让我们一起，在这个小助手的引领下，开启一场非凡的非遗探索之旅吧！
+        </p>
+        <div class="input-container">
+            <input type="text" id="question" placeholder="Enter your question here" oninput="toggleClearButton()">
+            <button id="sendBtn" onclick="sendQuestion()" disabled>Send</button>
+            <button id="clearBtn" onclick="clearInput()" disabled>Clear</button>
+        </div>
+        <p id="result"></p>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        // Function to toggle clear and send buttons
+        function toggleClearButton() {
+            const questionInput = document.getElementById('question');
+            const clearBtn = document.getElementById('clearBtn');
+            const sendBtn = document.getElementById('sendBtn');
+
+            const isEmpty = questionInput.value.trim() === ''; // 判断输入框是否为空
+
+            // 如果输入框为空，禁用清空和发送按钮
+            clearBtn.disabled = isEmpty;
+            sendBtn.disabled = isEmpty;
+        }
+
+        // Function to clear the input field
+        function clearInput() {
+            const questionInput = document.getElementById('question');
+            questionInput.value = '';
+            toggleClearButton();
+        }
+
+        // Function to send the question
+        function sendQuestion() {
+            const question = document.getElementById('question').value.trim(); // 去掉多余的空格
+            const sendBtn = document.getElementById('sendBtn');
+            const clearBtn = document.getElementById('clearBtn');
+
+            if (!question) {
+                return; // 如果输入为空，不执行发送操作
+            }
+
+            sendBtn.disabled = true;
+            clearBtn.disabled = true;
+            document.getElementById('result').innerHTML = '<span style="text-align: center; display: block;">正在处理中...</span>';
+
+            fetch('http://localhost:3010/ask', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({question: question})
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.answer) {
+                        document.getElementById('result').innerText = data.answer;
+                    } else if (data.error) {
+                        document.getElementById('result').innerText = 'Error: ' + data.error;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('result').innerHTML = '<span style="text-align: left; display: block;">请求失败，请稍后再试。</span>';
+                })
+                .finally(() => {
+                    sendBtn.disabled = false;
+                    toggleClearButton(); // 重新检查按钮状态
+                });
+        }
+    </script>
+{% endblock %}

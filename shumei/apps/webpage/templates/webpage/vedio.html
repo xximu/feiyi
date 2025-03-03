@@ -1,0 +1,362 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}非遗视频展示页面{% endblock %}
+{% block css %}
+<style>
+    .carousel {
+        display: flex;
+        overflow: hidden;
+        height: 500px;
+        position: relative;
+        margin-top: -10px;
+    }
+    .carousel img {
+        width: 100%;
+        height: auto;
+        display: none;
+    }
+    .content {
+        padding: 20px;
+        background-color: #fff;
+        margin: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        min-height: 450px;
+        height:auto;
+    }
+    .video-container {
+        width: calc(50% - 20px);
+        margin-bottom: 20px;
+        text-align: center;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease;
+    }
+    .video-info {
+        margin-top: 10px;
+        text-align: left;
+        color: #555;
+        padding: 0 10px;
+    }
+    body {
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+    .search-container {
+        width: 100%;
+        text-align: left;
+        margin-top: 10px;
+        margin-left: 25px;
+    }
+    .search-container input {
+        width: 300px;
+        padding: 10px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="search-container">
+    <input type="text" id="video-search" placeholder="搜索视频标签..." oninput="filterVideos()">
+</div>
+<div class="content" id="video-list">
+    <div class="video-container" data-tags="非遗戏曲" id="video-1">
+        <video controls width="100%" height="auto">
+            <source src="{% static 'webpage/mp/1.ifox' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+            <p><strong>介绍:</strong> 这不是迷信，这是中国傩戏。</p>
+        </div>
+    </div>
+    <div class="video-container" data-tags="非遗技艺" id="video-2">
+        <video controls width="100%" height="auto">
+            <source src="{% static 'webpage/mp/2.ifox' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+            <p><strong>介绍:</strong> 在你看到这期视频之前，它，没有观众</p>
+        </div>
+    </div>
+    <div class="video-container" data-tags="非遗技艺" id="video-3">
+        <video controls width="100%" height="auto">
+            <source src="{% static 'webpage/mp/3.ifox' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+            <p><strong>介绍:</strong> 【湖南非遗_湘潭纸影】《旧影》</p>
+        </div>
+    </div>
+    <div class="video-container" data-tags="非遗纪录片" id="video-4">
+        <video controls width="100%" height="auto">
+            <source src="{% static 'webpage/mp/4.ifox' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+            <p><strong>介绍:</strong>美丽乡村与非遗保护第三集：湖南花垣</p>
+        </div>
+    </div>
+    <div class="video-container" data-tags="非遗纪录片" id="video-5">
+        <video controls width="100%" height="auto">
+            <source src="{% static 'webpage/mp/5.ifox' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+            <p><strong>介绍:</strong>非遗文化纪录片《七彩苗绣》</p>
+        </div>
+    </div>
+    <div class="video-container" data-tags="非遗纪录片" id="video-6">
+        <video controls width="100%" height="auto">
+            <source src="{% static 'webpage/mp/6.ifox' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+            <p><strong>介绍:</strong>【非遗文化记录片】归塑</p>
+        </div>
+    </div>
+    <div class="video-container" data-tags="非遗纪录片" id="video-7">
+        <video controls width="100%" height="auto">
+            <source src="{% static 'webpage/mp/7.ifox' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+            <p><strong>介绍:</strong>《纸福纸影》湖南非物质文化遗产湘潭纸影戏纪录片</p>
+        </div>
+    </div>
+    <div class="video-container" data-tags="非遗传承人" id="video-8">
+        <video controls width="100%" height="auto">
+            <source src="{% static 'webpage/mp/8.ifox' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+            <p><strong>介绍:</strong> 【以针为笔，以线作画】湘绣研究所 非遗湘绣技艺传承人·成新湘</p>
+        </div>
+    </div>
+    <div class="video-container" data-tags="非遗技艺" id="video-9">
+        <video controls width="100%" height="auto">
+            <source src="{% static 'webpage/mp/9.ifox' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+            <p><strong>介绍:</strong>一把好的油纸伞能用几十年！石鼓油纸伞制作技艺—省级非物质文化遗产</p>
+        </div>
+    </div>
+    <div class="video-container" data-tags="非遗技艺" id="video-10">
+        <video controls width="100%" height="auto">
+            <source src="{% static 'webpage/mp/10.ifox' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+            <p><strong>介绍:</strong>纪录片《铁树银花》 非遗“打铁花”专题纪录片</p>
+        </div>
+    </div>
+    <div class="video-container" data-tags="非遗戏曲" id="video-11">
+        <video controls width="100%" height="auto">
+            <source src="{% static 'webpage/mp/11.ifox' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+            <p><strong>介绍:</strong>【非遗_荆州花鼓戏】青年戏曲传承 —《花鼓韵·戏梦不息》</p>
+        </div>
+    </div>
+    <div class="video-container" data-tags="非遗美食" id="video-12">
+        <video controls width="100%" height="auto">
+            <source src="{% static 'webpage/mp/12.ifox' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+            <p><strong>介绍:</strong>【非遗美食】长沙市非遗·小钵子甜酒</p>
+        </div>
+    </div>
+    <div class="video-container" data-tags="非遗美食" id="video-13">
+        <video controls width="100%" height="auto">
+            <source src="{% static 'webpage/mp/13.ifox' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+            <p><strong>介绍:</strong>雕花蜜饯宣传短片——湖南省非物质文化遗产</p>
+        </div>
+    </div>
+    <div class="video-container" data-tags="非遗美食" id="video-14">
+        <video controls width="100%" height="auto">
+            <source src="{% static 'webpage/mp/14.ifox' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+            <p><strong>介绍:</strong>鼎食文化：常德钵子菜，湖南省级非遗，小火慢炖看着就香！</p>
+        </div>
+    </div>
+    <div class="video-container" data-tags="非遗美食" id="video-15">
+        <video controls width="100%" height="auto">
+            <source src="{% static 'webpage/mp/15.ifox' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+            <p><strong>介绍:</strong>剁椒鱼头 _ 非遗美食 _ 湖南省</p>
+        </div>
+    </div>
+    <div class="video-container" data-tags="非遗戏曲" id="video-16">
+        <video controls width="100%" height="auto">
+            <source src="{% static 'webpage/mp/16.ifox' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+            <p><strong>介绍:</strong>非物质文化遗产——昆曲</p>
+        </div>
+    </div>
+    <div class="video-container" data-tags="非遗戏曲" id="video-17">
+        <video controls width="100%" height="auto">
+            <source src="{% static 'webpage/mp/17.ifox' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+            <p><strong>介绍:</strong>枫坪傩狮舞纪录片——湖南省省级非物质文化遗产</p>
+        </div>
+    </div>
+    <div class="video-container" data-tags="非遗传承人" id="video-18">
+        <video controls width="100%" height="auto">
+            <source src="{% static 'webpage/mp/18.ifox' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+            <p><strong>介绍:</strong>女书习俗-何静华——湖南省非物质文化遗产保护中心</p>
+        </div>
+    </div>
+    <div class="video-container" data-tags="李子柒" id="video-19">
+        <video controls width="100%" height="auto">
+            <source src="{% static 'webpage/mp/19.ifox' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+            <p><strong>介绍:</strong>雕漆隐花，雕出紫气东来！</p>
+        </div>
+    </div>
+    <div class="video-container" data-tags="李子柒" id="video-20">
+        <video controls width="100%" height="auto">
+            <source src="{% static 'webpage/mp/20.ifox' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+            <p><strong>介绍:</strong>【构皮纸】千年长安千年纸，原来最原始的纸张是这样造出来的</p>
+        </div>
+    </div>
+    <div class="video-container" data-tags="李子柒" id="video-21">
+        <video controls width="100%" height="auto">
+            <source src="{% static 'webpage/mp/21.ifox' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+            <p><strong>介绍:</strong>【黄豆酱油】用黄豆酿一壶传统手工酱油，中国味才养中国胃</p>
+        </div>
+    </div>
+    <div class="video-container" data-tags="李子柒" id="video-22">
+        <video controls width="100%" height="auto">
+            <source src="{% static 'webpage/mp/22.ifox' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+            <p><strong>介绍:</strong>【活字印刷】一方小小的木活字，镌刻出中华千年的底蕴风流</p>
+        </div>
+    </div>
+    <div class="video-container" data-tags="李子柒" id="video-23">
+        <video controls width="100%" height="auto">
+            <source src="{% static 'webpage/mp/23.ifox' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+            <p><strong>介绍:</strong>【绢花】捣鼓了一身看花的衣裳，和我家老小孩一起拥抱春天！</p>
+        </div>
+    </div>
+    <div class="video-container" data-tags="李子柒" id="video-24">
+        <video controls width="100%" height="auto">
+            <source src="{% static 'webpage/mp/24.ifox' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+            <p><strong>介绍:</strong>【蓝染】印染在花布上的靛蓝，铭刻在骨子里的传承——蓝印花布</p>
+        </div>
+    </div>
+    <div class="video-container" data-tags="李子柒" id="video-25">
+        <video controls width="100%" height="auto">
+            <source src="{% static 'webpage/mp/25.ifox' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+            <p><strong>介绍:</strong>【蜀绣】千年民俗蕴服章之美，蜀绣文化彰华夏礼仪</p>
+        </div>
+    </div>
+    <div class="video-container" data-tags="李子柒" id="video-26">
+        <video controls width="100%" height="auto">
+            <source src="{% static 'webpage/mp/26.ifox' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+            <p><strong>介绍:</strong>【竹器】为生活添一抹淡雅绿意，用砍下的竹子制些物件儿——竹沙发</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+<script>
+    function filterVideos() {
+        var searchTerm = document.getElementById('video-search').value.trim().toLowerCase();
+        var videoContainers = document.querySelectorAll('.video-container');
+        var matched = false;
+        var noDataMessage = document.getElementById('no-data-message');
+        if (searchTerm === "") {
+            videoContainers.forEach(function (container) {
+                container.style.display = 'block';
+                container.classList.remove('highlight');
+            });
+            if (noDataMessage) {
+                noDataMessage.style.display = 'none';
+            }
+            return;
+        }
+        var anyMatch = false;
+        videoContainers.forEach(function (container) {
+            var tags = container.getAttribute('data-tags').toLowerCase();
+            if (tags.includes(searchTerm)) {
+                container.style.display = 'block';
+                if (!matched) {
+                    container.scrollIntoView({behavior: 'smooth', block: 'center'});
+                    matched = true;
+                }
+                anyMatch = true;
+            } else {
+                container.style.display = 'none';
+            }
+        });
+        if (!anyMatch) {
+            if (!noDataMessage) {
+                noDataMessage = document.createElement('div');
+                noDataMessage.id = 'no-data-message';
+                noDataMessage.textContent = '暂无数据';
+                noDataMessage.style.position = 'absolute';
+                noDataMessage.style.top = '50%';
+                noDataMessage.style.left = '50%';
+                noDataMessage.style.transform = 'translate(-50%, -50%)';
+                noDataMessage.style.fontSize = '24px';
+                noDataMessage.style.color = '#888';
+                noDataMessage.style.textAlign = 'center';
+                noDataMessage.style.fontWeight = 'bold';
+                noDataMessage.style.zIndex = '10';
+                document.querySelector('.content').appendChild(noDataMessage);
+            } else {
+                noDataMessage.style.display = 'block';
+            }
+        } else if (noDataMessage) {
+            noDataMessage.style.display = 'none';
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}非遗介绍页面{% endblock %}
+{% block css %}
+<style>
+    .heritage-carousel {
+        display: flex;
+        overflow: hidden;
+        height: 550px;
+        position: relative;
+    }
+    .heritage-carousel img {
+        width: 100%;
+        height: auto;
+        display: none;
+    }
+    .heritage-carousel img:first-child {
+        display: block;
+    }
+    .carousel-indicators {
+        position: absolute;
+        bottom:-35px;
+        left: 50%;
+        display: flex;
+        gap: 15px;
+    }
+    .carousel-indicators button {
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background-color: #ccc;
+        border: none;
+        cursor: pointer;
+    }
+    .carousel-indicators .active {
+        background-color: #f7a800;
+    }
+    .carousel-button {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        font-size: 24px;
+        padding: 10px;
+        cursor: pointer;
+        z-index: 10;
+    }
+    .carousel-button.left {
+        left: 10px;
+    }
+    .carousel-button.right {
+        right: 10px;
+    }
+    .heritage-content {
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 25px;
+        max-width: 1200px;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    .heritage-content h1 {
+        font-size: 34px;
+        margin-bottom: 20px;
+        color: #f7a800;
+    }
+    .heritage-content p.introduction {
+        font-size: 18px;
+        color: #444;
+        line-height: 1.8;
+        text-align: justify;
+        text-indent: 2em;
+    }
+    .content-wrapper {
+        display: flex;
+        justify-content: space-between;
+        gap: 30px;
+        margin-top: 40px;
+    }
+    .heritage-content {
+        width: 68%;
+    }
+    .news-section {
+        width: 32%;
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    .news-carousel {
+        width: 100%;
+        height: 250px;
+        overflow: hidden;
+        border-radius: 10px;
+        position: relative;
+        margin-bottom: 20px;
+    }
+    .news-carousel img {
+        width: 150%;
+        height: 100%;
+        object-fit: cover;
+        display: none;
+    }
+    .news-carousel img:first-child {
+        display: block;
+    }
+    .news-section .news-content {
+        margin-top: 20px;
+    }
+    .news-section .news-content h2 {
+        font-size: 34px;
+        margin-bottom: 20px;
+        color: #333;
+    }
+    .news-section .news-content p {
+        font-size: 18px;
+        margin-bottom: 15px;
+        color: #555;
+    }
+    .news-content a {
+        color: #1fa0e0;
+        text-decoration: none;
+    }
+    .news-content a:hover {
+        text-decoration: underline;
+    }
+    @media (max-width: 768px) {
+        .content-wrapper {
+            flex-direction: column;
+            align-items: center;
+        }
+        .heritage-content {
+            width: 100%;
+        }
+        .news-section {
+            width: 100%;
+            margin-top: 30px;
+        }
+        .heritage-carousel {
+            height: 300px;
+        }
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="heritage-carousel" id="carousel">
+    <img src="{% static 'webpage/images/index2.jpg' %}" alt="Image 1">
+    <img src="{% static 'webpage/images/index1.jpg' %}" alt="Image 2">
+    <img src="{% static 'webpage/images/index3.jpg' %}" alt="Image 3">
+    <img src="{% static 'webpage/images/index4.jpg' %}" alt="Image 4">
+    <button class="carousel-button left" id="prevBtn">&#10094;</button>
+    <button class="carousel-button right" id="nextBtn">&#10095;</button>
+</div>
+<div class="carousel-indicators" id="carousel-indicators">
+    <button class="active" data-index="0"></button>
+    <button data-index="1"></button>
+    <button data-index="2"></button>
+    <button data-index="3"></button>
+</div>
+<div class="content-wrapper">
+    <div class="heritage-content">
+        <h1>湖南省非物质文化遗产</h1>
+        <p class="introduction">
+            "湖南省，这片历史悠久、文化底蕴深厚的土地，孕育了众多璀璨夺目的非物质文化遗产，它们如同璀璨星辰，照亮了中华文化的浩瀚星空。这些非物质文化遗产，是湖南人民世代相传的智慧结晶与情感寄托，涵盖了民间文学、传统音乐、舞蹈、戏剧、曲艺、杂技与竞技、美术、传统手工艺以及民俗活动等多个领域。
+        </p>
+        <p class="introduction">
+            从古老而神秘的湘西苗族鼓舞，那激昂的鼓点与灵动的舞姿，讲述着苗族人民对自然的敬畏与对生活的热爱；到湘剧的高亢悠扬，其独特的唱腔与华丽的服饰，展现了湖南戏曲艺术的博大精深；再到浏阳花炮的绚烂多彩，每一声轰鸣都承载着对节日庆典的热烈祝福与对未来的美好祈愿。
+        </p>
+        <p class="introduction">
+            此外，还有土家织锦的精美绝伦，一针一线间编织出土家族人民的勤劳与智慧；岳阳扇子的巧夺天工，不仅是实用之物，更是艺术与文化的完美结合；以及遍布湘南湘北的各类民俗节庆，如端午龙舟赛、中秋团圆宴等，这些活动不仅丰富了民众的精神生活，也加深了人们对传统文化的认同与传承。
+        </p>
+        <p class="introduction">
+            湖南省非物质文化遗产，是湖南文化多样性的生动体现，它们以其独特的魅力，吸引着世界的目光，成为连接过去与未来，沟通心灵与文化的桥梁。让我们共同珍视这份宝贵的文化遗产，传承与发展，让它们在新的时代背景下焕发出更加绚丽的光彩。"
+        </p>
+    </div>
+    <div class="news-section">
+        <div class="news-content">
+            <h2>最新动态</h2>
+            <p>
+                <strong>2024年11月15日 - 视觉中国</strong><br>
+                <a href="http://news.cyol.com/gb/articles/2024-11/15/content_mOZKBMfVL5.html" target="_blank">湖南永州：瑶族学生练习长鼓舞
+                    鼓声阵阵传非遗</a>
+            </p>
+            <p>
+                <strong>2024年11月14日 - 中国日报网</strong><br>
+                <a href="https://baijiahao.baidu.com/s?id=1815678106168379455&wfr=spider&for=pc" target="_blank">文化中国行｜穿越时空的苗族文化史诗全国首部苗族非遗舞剧《二十四时舞》在长沙展演</a>
+            </p>
+            <p>
+                <strong>2024年11月14日 - 潇湘晨报</strong><br>
+                <a href="https://baijiahao.baidu.com/s?id=1815693281598892689&wfr=spider&for=pc" target="_blank">2024年湖南省国家级非遗代表性传承人记录工作推进会举行</a>
+            </p>
+            <p>
+                <strong>2024年11月12日 - 湖南日报</strong><br>
+                <a href="https://baijiahao.baidu.com/s?id=1815429342432200497&wfr=spider&for=pc" target="_blank">赏木偶戏、品湘茶、射箭，湖南非遗走进省政协</a>
+            </p>
+            <p>
+                <strong>2024年11月11日 - 潇湘晨报</strong><br>
+                <a href="https://baijiahao.baidu.com/s?id=1815438268295125600&wfr=spider&for=pc" target="_blank">非遗祈福之旅！金牌导游带你领略楚南福地</a>
+            </p>
+            <p><a href="http://www.hunanfeiyi.cn/news-0-0.html">更多资讯>></a></p>
+        </div>
+    </div>
+</div>
+<script>
+    const images = document.querySelectorAll('.heritage-carousel img');
+    const indicators = document.querySelectorAll('.carousel-indicators button');
+    let currentIndex = 0;
+    function changeImage(index) {
+        images.forEach((img, i) => {
+            img.style.display = 'none';
+            indicators[i].classList.remove('active');
+        });
+        images[index].style.display = 'block';
+        indicators[index].classList.add('active');
+    }
+    changeImage(currentIndex);
+    indicators.forEach((indicator, index) => {
+        indicator.addEventListener('click', () => {
+            currentIndex = index;
+            changeImage(currentIndex);
+        });
+    });
+    document.getElementById('prevBtn').addEventListener('click', () => {
+        currentIndex = (currentIndex - 1 + images.length) % images.length;
+        changeImage(currentIndex);
+    });
+    document.getElementById('nextBtn').addEventListener('click', () => {
+        currentIndex = (currentIndex + 1) % images.length;
+        changeImage(currentIndex);
+    });
+    setInterval(() => {
+        currentIndex = (currentIndex + 1) % images.length;
+        changeImage(currentIndex);
+    }, 3000);
+</script>
+{% endblock %}

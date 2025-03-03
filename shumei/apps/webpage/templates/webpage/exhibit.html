@@ -1,0 +1,864 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}非遗展品页面{% endblock %}
+
+{% block css %}
+<style>
+
+    .carousel {
+        display: flex;
+        overflow: hidden;
+        height: 500px;
+        position: relative;
+        margin-top: -10px;
+    }
+
+    .carousel img {
+        width: 100%;
+        height: auto;
+        display: none;
+    }
+
+    .content {
+        position: relative;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.9);
+        margin: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .content h1 {
+        font-size: 2.5em;
+        margin-bottom: 20px;
+        text-align: center;
+        color: #40c5f5;
+    }
+
+    .content p.intro {
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 1.2em;
+        color: #555;
+        line-height: 1.6;
+    }
+
+    .content .input-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        max-width: 800px;
+    }
+
+    .content input[type="text"] {
+        flex: 1;
+        padding: 20px;
+        margin-right: 20px;
+        border: 2px solid #1fa0e0;
+        border-radius: 12px;
+        font-size: 1.2em;
+        outline: none;
+        transition: border-color 0.3s ease;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .content input[type="text"]:focus {
+        border-color: #0056b3;
+    }
+
+    .content button {
+        padding: 20px 40px;
+        border: none;
+        border-radius: 12px;
+        background-color: #1da6e0;
+        color: #fff;
+        font-size: 1.2em;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .content button:hover {
+        background-color: #054b96;
+        transform: translateY(-3px);
+    }
+
+    .content p#result {
+        margin-top: 30px;
+        width: 80%;
+        text-align: center;
+        font-size: 1.3em;
+        color: #333;
+        line-height: 1.6;
+    }
+
+    .small-navigation {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        display: flex;
+        flex-direction: column;
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        z-index: 5;
+        gap: 10px;
+        width: 90px;
+    }
+
+    .small-navigation a {
+        color: #1fa0e0;
+        text-decoration: none;
+        font-size: 1.4em;
+        transition: color 0.3s ease;
+    }
+
+    .small-navigation a:hover {
+        color: #b3e5fc;
+    }
+
+    .section {
+        width: 100%;
+        max-width: 1000px;
+        margin-bottom: 50px;
+        position: relative;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .section h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+        font-size: 2em;
+        width: 100%;
+    }
+
+    .video-container {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+    }
+
+    .left-column {
+        margin-right: 180px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-right: 4px;
+    }
+
+    .left-column video {
+        width: 460px;
+        height: 360px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .slideBox-container {
+        display: flex;
+        justify-content: center;
+        width: 460px;
+    }
+
+    .slideBox {
+        margin-top: 10px;
+        justify-content: center;
+        display: flex;
+        overflow-x: hidden;
+        overflow-y: hidden;
+        gap: 20px;
+        background: rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 8px;
+        padding: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        width: 1500px;
+        height: 80px;
+    }
+
+    .slideBox img {
+        width: 200px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .slideBox img:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .right-column {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .right-column .intro-name {
+        font-size: 1.8em;
+        color: #1fa0e0;
+        margin-bottom: 10px;
+    }
+
+    .right-column .intro-link {
+        font-size: 1.2em;
+        color: #1fa0e0;
+        margin-bottom: 10px;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .right-column .intro-link:hover {
+        color: #b3e5fc;
+    }
+
+    .right-column .intro-description {
+        font-size: 1.1em;
+        color: #555;
+        line-height: 1.6;
+    }
+
+    .item-navigation-container {
+        position: absolute;
+        right: 20px;
+        bottom: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        background-color: rgba(211, 211, 211, 0.5);
+        padding: 8px 12px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(255, 255, 255, 0.2);
+    }
+
+    .navigation-buttons {
+        display: flex;
+        gap: 10px;
+    }
+
+    .item-counter {
+        margin-top: 10px;
+        color: #000;
+        font-size: 1.1em !important;
+        text-align: center;
+    }
+
+    .nav-button {
+        width: 120px;
+        height: 40px;
+        border: none;
+        border-radius: 4px;
+        background-color: #007BFF;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.3s;
+        font-size: 0.8em !important;
+        font-weight: bold;
+        box-shadow: 0 2px 4px rgba(255, 255, 255, 0.2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .nav-button:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .footer {
+        background-color: rgba(51, 51, 51, 0.9);
+        color: #fff;
+        text-align: center;
+        padding: 30px;
+        margin-top: 30px;
+    }
+
+    .footer a {
+        color: #fff;
+        text-decoration: none;
+        margin: 0 15px;
+        font-size: 1.1em;
+        transition: color 0.3s ease;
+    }
+
+    .footer a:hover {
+        color: #b3e5fc;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 100;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    .modal-content {
+        margin: 5% auto;
+        display: block;
+        max-width: 80%;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 20px;
+        right: 35px;
+        color: #fff;
+        font-size: 40px;
+        font-weight: bold;
+        transition: color 0.3s ease;
+        cursor: pointer;
+    }
+
+    .modal-close:hover,
+    .modal-close:focus {
+        color: #bbb;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .nav-buttons {
+        position: absolute;
+        top: 50%;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        transform: translateY(-50%);
+    }
+
+    .image-button {
+        background-color: rgba(255, 255, 255, 0.8);
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+        font-size: 24px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .right-column .intro-material,
+    .right-column .intro-size {
+        font-size: 1.0em;
+        color: #030303;
+        margin-bottom: 10px;
+    }
+
+    .right-column .intro-description {
+        font-size: 1.0em;
+        color: #090909;
+        line-height: 1.6;
+        margin-top: 6px;
+    }
+
+    /* 为当前导航项添加高亮效果 */
+    .small-navigation a.active {
+        color: dodgerblue;
+        font-weight: bold;
+    }
+
+
+</style>
+{% endblock css %}
+
+{% block content %}
+<div class="content">
+    <div class="small-navigation">
+        <a href="#section2">陶瓷</a>
+        <a href="#section1">漆器</a>
+        <a href="#section3">玉石雕刻</a>
+    </div>
+    <div class="section" id="section1">
+        <div class="video-container">
+            <div class="left-column">
+                <video id="videoPlayer" controls>
+                    <source src="{% static 'webpage/data/2.mp4' %}" type="video/mp4">
+                    您的浏览器不支持 video 标签。
+                </video>
+                <div class="slideBox-container">
+                    <div class="slideBox">
+                        <!-- 图片会动态加载 -->
+                    </div>
+                </div>
+            </div>
+            <div class="right-column">
+                <div class="intro-name">物品名称</div>
+                <a href="#" class="intro-link" target="_blank">3D模型查看</a>
+                <div class="intro-material">材质: 漆器</div>
+                <div class="intro-size">尺寸: 直径30cm</div>
+                <div class="intro-description">简介</div>
+            </div>
+        </div>
+    </div>
+    <div class="item-navigation-container">
+        <div class="navigation-buttons">
+            <button id="prevButton" class="nav-button">上一个</button>
+            <button id="nextButton" class="nav-button">下一个</button>
+        </div>
+        <div class="item-counter" id="itemCounter">第1件物品，共10件物品</div>
+    </div>
+</div>
+{% endblock %}
+
+{% block end %}
+<div id="imageModal" class="modal">
+    <span class="modal-close">&times;</span>
+    <img class="modal-content" id="modalImage">
+    <div class="nav-buttons">
+        <button class="image-button" id="prevImage">&lt;</button>
+        <button class="image-button" id="nextImage">&gt;</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+    const dataSets = {
+        section1: [
+            {
+                video: "{% static 'webpage/data/2.mp4' %}",
+                images: [
+                    "{% static 'webpage/data/1.2.1.jpg' %}",
+                    "{% static 'webpage/data/1.2.2.jpg' %}",
+                    "{% static 'webpage/data/1.2.3.jpg' %}",
+                    "{% static 'webpage/data/1.2.4.jpg' %}",
+                    "{% static 'webpage/data/1.2.5.jpg' %}"
+                ],
+                name: '“君幸食”漆耳杯',
+                link: 'https://example.com/3d-view2',
+                material: '材质：漆器',
+                size: '尺寸：长18.6厘米、宽17.8厘米、高3.6厘米',
+                description: '展品介绍：“君幸酒”漆耳杯，木胎研制，杯内髹红漆，杯外黑漆。纹饰设在杯内及口沿和双耳上。这40件耳杯可分成大、中、小三种型号，中号杯内红漆地上绘黑漆卷云纹，中心书“君幸酒”三字，杯口及双耳以朱、赭二色绘几何云形纹，耳背朱书“一升”二字。器形线条圆柔，花纹流畅优美。这种耳杯共20件。大号杯无花纹，仅有“君幸酒”三字，耳背朱书“四升”。小号杯10件，两耳及口沿朱绘几何纹。“君幸酒”漆耳杯是饮酒之具，人所共识。'
+            },
+            {
+                video: "{% static 'webpage/data/1.mp4' %}",
+                images: [
+                    "{% static 'webpage/data/1.1.jpg' %}",
+                    "{% static 'webpage/data/1.2.jpg' %}",
+                    "{% static 'webpage/data/1.3.jpg' %}",
+                    "{% static 'webpage/data/1.4.jpg' %}"
+                ],
+                name: '绘猫、龟漆盘',
+                link: 'https://de.hnmuseum.com/collection/threeDetails.html?id=9681497008405217',
+                material: '材质：漆器',
+                size: '尺寸：高3、口径18. 2厘米',
+                description: '展品介绍：盛食器。旋木胎，盘内黑漆地上画三猫一龟，类似近代写生线条。猫用红漆单线勾勒，内涂灰绿色漆，朱绘耳、须、口、眼、爪、牙和柔毛，画面特别突出了猫大睁的双眼和长尾巴以及乌龟的长颈，形象颇为生动。三猫一龟的周围以红色和灰绿二色绘云纹。盘口沿朱绘几何图案。画面整体呈同心圆的形态向外扩展，构图讲究对称。龟代表长寿，在当时被视为一种祥瑞，与龙、凤、麟并称“四灵”。猫与龟的组合，反映了当时人们希望延年益寿的美好愿望。'
+            },
+            {
+                video: "{% static 'webpage/data/3.mp4' %}",
+                images: [
+                    "{% static 'webpage/data/1.3.1.jpg' %}",
+                    "{% static 'webpage/data/1.3.2.jpg' %}",
+                    "{% static 'webpage/data/1.3.3.jpg' %}",
+                    "{% static 'webpage/data/1.3.4.jpg' %}"
+                ],
+                name: '“君幸食”小漆盘',
+                link: 'https://example.com/3d-view2',
+                material: '材质：漆器',
+                size: '尺寸：高3、口径18. 2厘米',
+                description: '展品介绍：盛食器。旋木胎。盘内髹红漆，盘心在黑漆地上朱绘卷云纹，卷云纹中间以朱漆书“君幸食”三字，口沿朱绘波折纹和点纹，口沿内朱绘线纹和B形图案。盘外髹黑漆，近底部朱书“一升半升”四字。'
+            },
+            {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+        ],
+        section2: [
+        {
+                video: "{% static 'webpage/data/4.mp4' %}",
+                images: [
+                    "{% static 'webpage/data/2.2.1.jpg' %}",
+                    "{% static 'webpage/data/2.2.2.jpg' %}",
+                    "{% static 'webpage/data/2.2.3.jpg' %}",
+                    "{% static 'webpage/data/2.2.4.jpg' %}"
+                ],
+                name: '青花勾连碗',
+                link: 'https://de.hnmuseum.com/collection/threeDetails.html?id=968149707299749896',
+                material: '材质：陶瓷',
+                size: '尺寸：高9cm，口径19.9cm，足径9.3cm',
+                description: '展品介绍：造型典雅，敞口设计优美，弧腹流畅，圈足工整细致，整体线条和谐，透露出不凡的艺术韵味。碗心精心绘制折枝莲，外壁缠绕着枝繁叶茂的莲花纹，寓意吉祥如意，富贵长寿。底部楷书“大清雍正年制”款识，笔力遒劲，彰显皇家风范。胎质细腻坚实，釉色莹润如玉，青料淡雅清新，工艺精湛绝伦，充分展现了雍正官窑的高超技艺与审美追求，瓷器作品在造型、图案、釉色等方面都达到了前所未有的高度，是中国瓷器文化中的一颗璀璨明珠，珍贵而独特，令人叹为观止。'
+            },
+            {
+                video: "{% static 'webpage/data/6.mp4' %}",
+                images: [
+                    "{% static 'webpage/data/2.1.1.jpg' %}",
+                    "{% static 'webpage/data/2.1.2.jpg' %}",
+                    "{% static 'webpage/data/2.1.3.jpg' %}",
+                    "{% static 'webpage/data/2.1.4.jpg' %}",
+                    "{% static 'webpage/data/2.1.5.jpg' %}",
+                    "{% static 'webpage/data/2.1.6.jpg' %}"
+                ],
+                name: '醴陵窑双耳兰草瓶',
+                link: 'https://example.com/3d-view2',
+                material: '材质：陶瓷',
+                size: '尺寸：高39.5cm，口径16.2cm，足径16.8cm',
+                description: '展品介绍：醴陵窑双耳兰草瓶，源自历史悠久的醴陵窑，采用细腻白莹陶瓷材质，造型挺拔，双耳设计雅致。瓶身绘有精细兰草图案，线条流畅，画风老辣，展现出醴陵釉下五彩瓷的独特魅力。此瓶不仅是艺术的瑰宝，也是历史的见证，曾历经战火，后在党和国家的支持下重焕新生。醴陵窑瓷器在国内外享有盛誉，多次荣获国际大奖。双耳兰草瓶以其精湛工艺和丰富文化内涵，吸引着无数游客与收藏家前来观赏，成为湖南博物院的瑰宝之一'
+            },
+            {
+                video: "{% static 'webpage/data/5.mp4' %}",
+                images: [
+                    "{% static 'webpage/data/2.3.1.jpg' %}",
+                    "{% static 'webpage/data/2.3.2.jpg' %}",
+                    "{% static 'webpage/data/2.3.3.jpg' %}",
+                    "{% static 'webpage/data/2.3.4.jpg' %}",
+                    "{% static 'webpage/data/2.3.5.jpg' %}"
+                ],
+                name: '青釉四系瓷坛',
+                link: 'https://example.com/3d-view2',
+                material: '材质：陶瓷',
+                size: '尺寸：高32.4cm，口径10.5cm，底径18.5cm',
+                description: '该瓷坛以瓷土或高岭土为主要原料，经过精细加工和高温烧制而成，釉色青翠欲滴，质地坚硬细腻，釉面光滑如镜，展现出高超的制作工艺和独特的艺术风格。其肩部对称装饰有四个系耳，造型古朴大方，美观实用，是研究古代瓷器艺术的重要实物资料。'
+            },
+                        {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+                        {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+                            {},
+            {},
+            {},
+            {},
+        ],
+        section3: [
+            {
+                video: "{% static 'webpage/data/7.mp4' %}",
+                images: [
+                    "{% static 'webpage/data/3.1.jpg' %}",
+                    "{% static 'webpage/data/3.2.jpg' %}",
+                    "{% static 'webpage/data/3.3.jpg' %}",
+                    "{% static 'webpage/data/3.4.jpg' %}"
+                ],
+                name: '良渚文化玉琮王',
+                link: 'https://example.com/3d-view2',
+                material: '材质：玉石',
+                size: '尺寸：高8.9厘米，射口直径16.5—17.6厘米',
+                description: '玉琮是一种筒形玉器，内圈为圆形，外圈四角见方，关于琮的功能有很多说法，例如通天地、祭祀神灵等，但由于缺少文字记录，很难确切的说明。从现有的资料看琮最初是佩戴在手臂上的，随时代变迁，逐渐呈现向瘦高方柱体发展的趋势，也因此失去了实用性而发展成完全的礼器。这件玉琮形体宽阔硕大，纹饰独特繁缛，乃良渚文化玉琮之首，堪称“琮王”。整器重约6500克，外方内圆，上大下小，中间对钻圆孔。琮体四面直槽内上下各琢刻一个具象的神人兽面图像，神人头戴羽冠，骑跨在一神兽上，图案采用浅浮雕和线刻技法雕琢而成。在角尺形的长方形凸面上，每两节琢刻一组抽象的神人兽面图案，以转角为中轴线向两侧展开，兽面的两侧各浅浮雕一变形夸张的鸟纹。'
+            },
+            {
+                video: "{% static 'webpage/data/8.mp4' %}",
+                images: [
+                    "{% static 'webpage/data/4.1.jpg' %}",
+                    "{% static 'webpage/data/3.2.jpg' %}",
+                    "{% static 'webpage/data/3.3.jpg' %}",
+                    "{% static 'webpage/data/3.4.jpg' %}"
+                ],
+                name: '良渚文化玉“权杖”瑁',
+                link: 'https://example.com/3d-view2',
+                material: '材质：玉石',
+                size: '尺寸：高5.72厘米，宽8.4厘米，厚约1.5厘米',
+                description: '权杖可能由有机质的材料例如木头制成，反山12号墓中的权杖头上有玉制的“瑁”，底部有玉制的“镦”装饰，有机质材料的权杖柄腐烂后仅剩两端的玉器，二者相聚约55厘米，可知权杖大致原长约60厘米。瑁体顶面与底面平直，底面钻有卯孔。一侧截面方正，另一侧截面尖圆，纵向呈曲线造型，极其罕见。器身整体刻纹繁缛，细如游丝，底纹布满细密的螺旋线，顶面也有螺旋线纹饰。两侧减地突出的浅浮雕神人兽面纹，跨越器物两面、上下错落构图，亦非常特别。'
+            },
+            {
+                video: "{% static 'webpage/data/9.mp4' %}",
+                images: [
+                    "{% static 'webpage/data/5.1.jpg' %}",
+                    "{% static 'webpage/data/5.2.jpg' %}"
+                ],
+                name: '良渚文化玉三叉形器',
+                link: 'https://example.com/3d-view2',
+                material: '材质：玉石',
+                size: '尺寸：高5.2厘米，宽7.4厘米，厚1.3厘米。',
+                description: '三叉形器形状独特，都出土于墓主头部，可能是冠帽上的饰品。这件三叉形器正面雕刻兽面纹，像浅浮雕一样减地突出，周边辅以螺旋线等细刻纹，三叉上刻划羽冠。背面光素无纹，中叉内有钻孔，贯通至底部。'
+            },
+
+        ]
+    };
+    let currentIndex = 0;
+    let currentSection = 'section1';
+    let currentImages = [];
+    const videoPlayer = document.getElementById('videoPlayer');
+    const itemCounter = document.getElementById('itemCounter');
+    const modal = document.getElementById('imageModal');
+    const modalImage = document.getElementById('modalImage');
+    const prevImageButton = document.getElementById('prevImage');
+    const nextImageButton = document.getElementById('nextImage');
+    const modalCloseButton = document.querySelector('.modal-close');
+
+    function updateVideo() {
+        const currentDataSet = dataSets[currentSection];
+        videoPlayer.src = currentDataSet[currentIndex].video;
+        videoPlayer.load();
+        itemCounter.textContent = `第${currentIndex + 1}件物品，共${currentDataSet.length}件物品`;
+        updateContent(currentDataSet[currentIndex]);
+        updateButtonState();
+    }
+
+    function updateContent(item) {
+        const introLink = document.querySelector('.intro-link');
+        introLink.href = item.link;
+        introLink.textContent = '3D模型查看';
+        document.querySelector('.intro-name').textContent = item.name;
+        document.querySelector('.intro-material').textContent = item.material;
+        document.querySelector('.intro-size').textContent = item.size;
+        document.querySelector('.intro-description').textContent = item.description;
+
+        // 清空之前的图片，动态添加新图片
+        const slideBox = document.querySelector('.slideBox');
+        slideBox.innerHTML = '';
+        currentImages = item.images; // 保存当前物品的所有图片
+        currentImages.forEach((img, index) => {
+            const imageElement = document.createElement('img');
+            imageElement.src = img;
+            imageElement.onclick = function () {
+                openModal(index); // 传递当前图片的索引
+            };
+            slideBox.appendChild(imageElement);
+        });
+    }
+
+    function openModal(imageIndex) {
+        modal.style.display = "block";
+        modalImage.src = currentImages[imageIndex];
+        currentModalIndex = imageIndex; // 保存当前在模态框中的图片索引
+    }
+
+    let currentModalIndex = 0;
+
+    function updateModalImage() {
+        modalImage.src = currentImages[currentModalIndex];
+    }
+
+    function closeModal() {
+        modal.style.display = "none";
+    }
+
+    prevImageButton.onclick = function () {
+        if (currentModalIndex > 0) {
+            currentModalIndex--;
+            updateModalImage();
+        }
+    };
+
+    nextImageButton.onclick = function () {
+        if (currentModalIndex < currentImages.length - 1) {
+            currentModalIndex++;
+            updateModalImage();
+        }
+    };
+
+    modalCloseButton.onclick = closeModal;
+
+    function updateButtonState() {
+        const currentDataSet = dataSets[currentSection];
+        document.getElementById('prevButton').disabled = (currentIndex === 0);
+        document.getElementById('nextButton').disabled = (currentIndex === currentDataSet.length - 1);
+    }
+
+    document.getElementById('prevButton').onclick = function () {
+        if (currentIndex > 0) {
+            currentIndex--;
+            updateVideo();
+        }
+    };
+
+    document.getElementById('nextButton').onclick = function () {
+        if (currentIndex < dataSets[currentSection].length - 1) {
+            currentIndex++;
+            updateVideo();
+        }
+    };
+
+    // 小导航栏点击事件
+    document.querySelector('.small-navigation a[href="#section1"]').onclick = (event) => {
+        event.preventDefault(); // 阻止默认的跳转行为
+        loadSection('section1');
+    };
+
+    document.querySelector('.small-navigation a[href="#section2"]').onclick = (event) => {
+        event.preventDefault(); // 阻止默认的跳转行为
+        loadSection('section2');
+    };
+
+    document.querySelector('.small-navigation a[href="#section3"]').onclick = (event) => {
+        event.preventDefault(); // 阻止默认的跳转行为
+        loadSection('section3');
+    };
+
+    function loadSection(section) {
+        currentSection = section;
+        currentIndex = 0;
+        // 更新导航栏和内容
+        updateVideo();
+
+        // 清除所有导航项的 'active' 类
+        const navLinks = document.querySelectorAll('.small-navigation a');
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+        });
+
+        // 添加 'active' 类到当前导航项
+        const currentNavLink = document.querySelector(`.small-navigation a[href="#${section}"]`);
+        if (currentNavLink) {
+            currentNavLink.classList.add('active');
+        }
+
+        // 清除所有 section 的 'active' 类
+        const sections = document.querySelectorAll('.section');
+        sections.forEach(sec => {
+            sec.classList.remove('active');
+        });
+
+        // 添加 'active' 类到当前 section
+        const currentSectionElement = document.getElementById(section);
+        if (currentSectionElement) {
+            currentSectionElement.classList.add('active');
+        }
+    }
+
+    // 初始化加载
+    updateVideo();
+    document.addEventListener('DOMContentLoaded', function () {
+        loadSection('section2'); // 页面加载时默认激活 section1
+    });
+</script>
+{% endblock %}
